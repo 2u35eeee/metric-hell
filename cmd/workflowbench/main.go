@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"metric-hell/internal/api"
-	"metric-hell/internal/content"
-	"metric-hell/internal/game"
+	"metric-hell/pkg/api"
+	"metric-hell/pkg/content"
+	"metric-hell/pkg/game"
 )
 
 func main() {

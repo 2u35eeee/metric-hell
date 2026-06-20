@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	internalapi "metric-hell/internal/api"
+	internalapi "metric-hell/pkg/api"
 )
 
 var h = internalapi.MustNewDefaultHandler()

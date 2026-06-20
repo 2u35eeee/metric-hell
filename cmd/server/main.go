@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"metric-hell/internal/api"
+	"metric-hell/pkg/api"
 )
 
 func main() {

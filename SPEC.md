@@ -21,9 +21,9 @@
 
 - `cmd/server`：本地 Go HTTP 服务。
 - `api/index.go`：Vercel Go Runtime 入口。
-- `internal/game`：核心规则引擎。
-- `internal/content`：JSON 节点加载。
-- `internal/api`：HTTP handler。
+- `pkg/game`：核心规则引擎。
+- `pkg/content`：JSON 节点加载。
+- `pkg/api`：HTTP handler。
 - `data/nodes.json`：benchmark 内容配置。
 - `web`：静态前端。
 

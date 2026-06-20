@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"metric-hell/internal/game"
+	"metric-hell/pkg/game"
 )
 
 func LoadNodes(path string) ([]game.Node, error) {

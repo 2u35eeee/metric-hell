@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"metric-hell/internal/content"
-	"metric-hell/internal/game"
+	"metric-hell/pkg/content"
+	"metric-hell/pkg/game"
 )
 
 type Handler struct {
