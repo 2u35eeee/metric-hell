@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WorkflowBench / Metric Hell</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main id="home" class="screen home-screen">
+      <section class="hero">
+        <p class="eyebrow">Metric Hell Presents</p>
+        <h1>WorkflowBench</h1>
+        <p class="subtitle">一个讽刺学生评价流水线的互动 benchmark 游戏</p>
+        <div class="aliases">
+          <span>人生 CI/CD</span>
+          <span>KPI Dungeon</span>
+          <span>做题流水线模拟器</span>
+        </div>
+        <div class="statement">
+          <p>这是一个娱乐向、讽刺向的学生 workflow 模拟项目。</p>
+          <p>它不会预测你的真实人生，也不会评价任何学校、地区、专业或职业选择。</p>
+          <p>它讽刺的是“人被无限指标化”的荒诞感。</p>
+          <p>请不要把本项目结果当成升学、就业或人生建议。如果你玩完觉得焦虑，请关闭它，然后去喝水、睡觉、散步、找朋友聊天。</p>
+        </div>
+        <button id="startBtn" class="primary-btn" type="button">开始一局</button>
+      </section>
+    </main>
+
+    <main id="game" class="screen dashboard hidden" aria-live="polite">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">WorkflowBench Runner</p>
+          <h2 id="studentId">虚构学生 #000</h2>
+        </div>
+        <div class="completion">
+          <span>人生完成度</span>
+          <strong id="completionValue">0.0%</strong>
+        </div>
+      </header>
+
+      <section class="layout">
+        <aside class="panel pipeline-panel">
+          <div class="panel-title">Workflow Pipeline</div>
+          <div id="pipeline" class="pipeline"></div>
+        </aside>
+
+        <section class="panel benchmark-panel">
+          <div class="panel-title">Current Benchmark</div>
+          <div id="nodeStage" class="stage-pill">高中</div>
+          <h2 id="nodeTitle">高考成绩 Benchmark</h2>
+          <p id="nodeText" class="node-text"></p>
+          <ul id="questions" class="questions"></ul>
+
+          <form id="actionForm" class="action-form">
+            <label for="actionSelect">选择本回合动作</label>
+            <div class="action-row">
+              <select id="actionSelect"></select>
+              <button class="primary-btn" type="submit">提交动作</button>
+            </div>
+            <p id="actionDescription" class="action-description"></p>
+          </form>
+        </section>
+
+        <aside class="panel metrics-panel">
+          <div class="panel-title">Metric Panel</div>
+          <div id="metrics" class="metrics"></div>
+        </aside>
+      </section>
+
+      <section class="panel log-panel">
+        <div class="panel-title">Event Log</div>
+        <div id="eventLog" class="event-log"></div>
+      </section>
+    </main>
+
+    <main id="result" class="screen result-screen hidden">
+      <section class="result-card">
+        <p class="eyebrow">Final Report</p>
+        <h1 id="endingTitle">指标继续生成中</h1>
+        <p id="endingType" class="subtitle">人生完成度无法达到 100%</p>
+        <div id="resultMetrics" class="result-metrics"></div>
+        <div class="report-block">
+          <h2>系统评价</h2>
+          <p id="systemEvaluation"></p>
+        </div>
+        <div class="report-block quiet">
+          <h2>隐藏评价</h2>
+          <p id="hiddenEvaluation"></p>
+        </div>
+        <button id="restartBtn" class="primary-btn" type="button">重新开始</button>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
