@@ -50,15 +50,14 @@
           <div id="nodeStage" class="stage-pill">高中</div>
           <h2 id="nodeTitle">高考成绩 Benchmark</h2>
           <p id="nodeText" class="node-text"></p>
+          <div id="nodeScenario" class="info-block"></div>
+          <div id="nodeMeasurement" class="info-block"></div>
           <ul id="questions" class="questions"></ul>
 
           <form id="actionForm" class="action-form">
-            <label for="actionSelect">选择本回合动作</label>
-            <div class="action-row">
-              <select id="actionSelect"></select>
-              <button class="primary-btn" type="submit">提交动作</button>
-            </div>
-            <p id="actionDescription" class="action-description"></p>
+            <div class="action-title">选择本回合人生分支</div>
+            <div id="actions" class="actions" role="group" aria-label="选择本回合人生分支"></div>
+            <button id="submitAction" class="primary-btn" type="submit">提交选中的人生片段</button>
           </form>
         </section>
 

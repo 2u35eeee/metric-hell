@@ -13,9 +13,12 @@ const (
 )
 
 type ActionOption struct {
-	ID          Action `json:"id"`
-	Label       string `json:"label"`
-	Description string `json:"description"`
+	ID          Action   `json:"id"`
+	Label       string   `json:"label"`
+	Scene       string   `json:"scene,omitempty"`
+	Description string   `json:"description"`
+	Effects     Effects  `json:"effects,omitempty"`
+	Unlocks     []string `json:"unlocks,omitempty"`
 }
 
 var defaultActions = []Action{
@@ -28,7 +31,22 @@ var defaultActions = []Action{
 	ActionRefuseMetric,
 }
 
-func AvailableActions(_ State, _ *Node) []ActionOption {
+func AvailableActions(_ State, node *Node) []ActionOption {
+	if node != nil && len(node.Branches) > 0 {
+		options := make([]ActionOption, 0, len(node.Branches))
+		for _, branch := range node.Branches {
+			options = append(options, ActionOption{
+				ID:          branch.ID,
+				Label:       branch.Label,
+				Scene:       branch.Scene,
+				Description: branch.Description,
+				Effects:     branch.Effects,
+				Unlocks:     branch.Unlocks,
+			})
+		}
+		return options
+	}
+
 	options := make([]ActionOption, 0, len(defaultActions))
 	for _, action := range defaultActions {
 		options = append(options, ActionOption{
@@ -38,6 +56,18 @@ func AvailableActions(_ State, _ *Node) []ActionOption {
 		})
 	}
 	return options
+}
+
+func FindBranch(node *Node, action Action) (BranchOption, bool) {
+	if node == nil {
+		return BranchOption{}, false
+	}
+	for _, branch := range node.Branches {
+		if branch.ID == action {
+			return branch, true
+		}
+	}
+	return BranchOption{}, false
 }
 
 func ApplyAction(s State, action Action) State {

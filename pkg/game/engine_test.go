@@ -1,6 +1,9 @@
 package game
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestSpawnNewBenchmarksDoesNotDuplicateUnlockedNodes(t *testing.T) {
 	state := State{UnlockedNodes: []string{"province_rank"}}
@@ -44,6 +47,70 @@ func TestEngineStepCompletesNodeAndReturnsNextNode(t *testing.T) {
 	}
 	if result.CurrentNode == nil || result.CurrentNode.ID != "province_rank" {
 		t.Fatalf("current node = %#v, want province_rank", result.CurrentNode)
+	}
+}
+
+func TestNodeBranchesProvideContextualActionsAndUnlockChosenPath(t *testing.T) {
+	nodes := []Node{
+		{
+			ID:        "gaokao_score",
+			Title:     "高考成绩 Benchmark",
+			Stage:     "高中",
+			Questions: []string{"分数之后，系统还需要什么字段？"},
+			Branches: []BranchOption{
+				{
+					ID:          Action("submit_rank_slice"),
+					Label:       "把分数切成更细排名",
+					Scene:       "家族群正在等待一个可以截图传播的数字。",
+					Description: "选择后系统会进入省排名精度校准。",
+					Effects:     Effects{BenchScore: 4, Anxiety: 5, PeerComparison: 8},
+					Unlocks:     []string{"province_rank"},
+					ResultText:  "你提交了更细排名。系统满意地增加了比较分辨率。",
+				},
+				{
+					ID:          Action("protect_curiosity"),
+					Label:       "先保留一点好奇心",
+					Scene:       "你没有继续把自己拆成小数点后的排名。",
+					Description: "选择后系统会提前暴露逃逸路径。",
+					Effects:     Effects{Selfhood: 8, Curiosity: 7, EscapeIndex: 10},
+					Unlocks:     []string{"life_not_workflow"},
+					ResultText:  "你保留了一个不便排序的部分。系统开始发热。",
+				},
+			},
+			Effects: Effects{Absurdity: 2},
+		},
+		{ID: "province_rank", Title: "省排名精度校准", Stage: "高中"},
+		{ID: "life_not_workflow", Title: "人生不是 Workflow", Stage: "逃逸"},
+	}
+	engine := NewEngine(nodes)
+	initial := engine.InitialResult(7)
+
+	if len(initial.Actions) != 2 {
+		t.Fatalf("len(actions) = %d, want 2", len(initial.Actions))
+	}
+	if initial.Actions[0].Scene == "" {
+		t.Fatalf("first action scene is empty: %#v", initial.Actions[0])
+	}
+
+	result, err := engine.Step(initial.State, Action("protect_curiosity"))
+	if err != nil {
+		t.Fatalf("Step returned error: %v", err)
+	}
+	if Contains(result.State.UnlockedNodes, "province_rank") {
+		t.Fatalf("province_rank unlocked after choosing escape branch: %#v", result.State.UnlockedNodes)
+	}
+	if !Contains(result.State.UnlockedNodes, "life_not_workflow") {
+		t.Fatalf("life_not_workflow not unlocked: %#v", result.State.UnlockedNodes)
+	}
+	if result.CurrentNode == nil || result.CurrentNode.ID != "life_not_workflow" {
+		t.Fatalf("current node = %#v, want life_not_workflow", result.CurrentNode)
+	}
+	if result.State.Curiosity <= initial.State.Curiosity {
+		t.Fatalf("curiosity = %d, want above %d", result.State.Curiosity, initial.State.Curiosity)
+	}
+	latestLog := strings.Join(result.State.EventLog, "\n")
+	if !strings.Contains(latestLog, "人生不是 Workflow") {
+		t.Fatalf("event log = %q, want unlocked node title", latestLog)
 	}
 }
 

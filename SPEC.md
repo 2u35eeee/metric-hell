@@ -27,6 +27,24 @@
 - `data/nodes.json`：benchmark 内容配置。
 - `web`：静态前端。
 
+## 玩法结构
+
+每个 benchmark 节点不是单一路线检查点，而是一个小型人生分叉：
+
+- `scenario` 描述玩家当前处在什么具体场景里。
+- `measurement` 解释该指标到底在讽刺什么、范围/口径是什么。
+- `questions` 是系统追问，用来制造“评价继续增殖”的荒诞感。
+- `branches` 是本回合可选分支，每个分支必须说明：
+  - `label`：玩家看到的选择名称。
+  - `scene`：这个选择在当前场景里意味着什么。
+  - `description`：选择后会发生什么。
+  - `effects`：对 0-100 指标面板的影响。
+  - `unlocks`：该分支进入的后续节点。
+  - `result_text`：选择后的事件日志。
+
+前端必须把分支展示成可读的选择卡，而不是只给一个抽象下拉框。
+指标面板必须展示中文指标名、当前值 `/100` 和讽刺解释，不应只泄露内部字段名。
+
 ## API
 
 ### POST `/api/new`
@@ -49,8 +67,20 @@
 ```json
 {
   "state": {},
-  "current_node": {},
-  "actions": [],
+  "current_node": {
+    "scenario": "当前人生场景",
+    "measurement": "该指标的口径/范围说明"
+  },
+  "actions": [
+    {
+      "id": "gpa_decimal_grind",
+      "label": "把 GPA 卷到小数点后一位",
+      "scene": "你开始计算 3.6/4.0 和 3.7/4.0 的命运差异。",
+      "description": "进入简历关键词密度。",
+      "effects": {},
+      "unlocks": ["resume_keyword_density"]
+    }
+  ],
   "ended": false,
   "ending": null
 }

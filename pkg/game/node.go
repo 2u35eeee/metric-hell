@@ -1,16 +1,29 @@
 package game
 
 type Node struct {
-	ID          string   `json:"id"`
-	Title       string   `json:"title"`
-	Stage       string   `json:"stage"`
-	Questions   []string `json:"questions"`
-	Unlocks     []string `json:"unlocks"`
-	TextOnEnter string   `json:"text_on_enter"`
-	TextOnPass  string   `json:"text_on_pass"`
-	TextOnFail  string   `json:"text_on_fail"`
+	ID          string         `json:"id"`
+	Title       string         `json:"title"`
+	Stage       string         `json:"stage"`
+	Scenario    string         `json:"scenario,omitempty"`
+	Measurement string         `json:"measurement,omitempty"`
+	Questions   []string       `json:"questions"`
+	Unlocks     []string       `json:"unlocks"`
+	Branches    []BranchOption `json:"branches,omitempty"`
+	TextOnEnter string         `json:"text_on_enter"`
+	TextOnPass  string         `json:"text_on_pass"`
+	TextOnFail  string         `json:"text_on_fail"`
+	Effects     Effects        `json:"effects"`
+	Absurdity   int            `json:"absurdity"`
+}
+
+type BranchOption struct {
+	ID          Action   `json:"id"`
+	Label       string   `json:"label"`
+	Scene       string   `json:"scene"`
+	Description string   `json:"description"`
 	Effects     Effects  `json:"effects"`
-	Absurdity   int      `json:"absurdity"`
+	Unlocks     []string `json:"unlocks"`
+	ResultText  string   `json:"result_text"`
 }
 
 type Effects struct {

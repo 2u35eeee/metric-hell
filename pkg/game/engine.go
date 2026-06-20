@@ -58,7 +58,20 @@ func (e *Engine) Step(state State, action Action) (Result, error) {
 		return Result{State: state, Ended: true, Ending: ending}, nil
 	}
 
-	state = ApplyAction(state, action)
+	unlocks := current.Unlocks
+	if branch, ok := FindBranch(current, action); ok {
+		state = ApplyEffects(state, branch.Effects)
+		if branch.ResultText != "" {
+			state.EventLog = append(state.EventLog, branch.ResultText)
+		} else {
+			state.EventLog = append(state.EventLog, fmt.Sprintf("你选择了「%s」。系统正在把该选择转换为可比较字段。", branch.Label))
+		}
+		if branch.Unlocks != nil {
+			unlocks = branch.Unlocks
+		}
+	} else {
+		state = ApplyAction(state, action)
+	}
 	state = ApplyEffects(state, current.Effects)
 	state.Absurdity += current.Absurdity
 	state.Stage = current.Stage
@@ -70,7 +83,7 @@ func (e *Engine) Step(state State, action Action) (Result, error) {
 	} else {
 		state.EventLog = append(state.EventLog, fmt.Sprintf("系统检测到你完成了「%s」。正在生成更精确的问题。", current.Title))
 	}
-	state = SpawnNewBenchmarks(state, *current)
+	state = e.spawnNewBenchmarks(state, *current, unlocks)
 	state = ClampState(state)
 
 	next := e.NextNode(state)
@@ -109,12 +122,31 @@ func (e *Engine) NextNode(state State) *Node {
 }
 
 func SpawnNewBenchmarks(s State, node Node) State {
-	for _, next := range node.Unlocks {
+	return SpawnNewBenchmarksWithUnlocks(s, node, node.Unlocks)
+}
+
+func SpawnNewBenchmarksWithUnlocks(s State, node Node, unlocks []string) State {
+	for _, next := range unlocks {
 		if Contains(s.UnlockedNodes, next) {
 			continue
 		}
 		s.UnlockedNodes = append(s.UnlockedNodes, next)
 		s.EventLog = append(s.EventLog, fmt.Sprintf("系统检测到你完成了「%s」，已生成更细评价指标：%s。", node.Title, next))
+	}
+	return s
+}
+
+func (e *Engine) spawnNewBenchmarks(s State, node Node, unlocks []string) State {
+	for _, next := range unlocks {
+		if Contains(s.UnlockedNodes, next) {
+			continue
+		}
+		s.UnlockedNodes = append(s.UnlockedNodes, next)
+		label := next
+		if nextNode, ok := e.byID[next]; ok {
+			label = nextNode.Title
+		}
+		s.EventLog = append(s.EventLog, fmt.Sprintf("系统检测到你完成了「%s」，已生成更细评价指标：%s。", node.Title, label))
 	}
 	return s
 }

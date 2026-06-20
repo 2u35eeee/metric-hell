@@ -99,8 +99,11 @@ data/nodes.json
 - `id`：唯一字符串。
 - `title`：展示名称。
 - `stage`：阶段，例如 `高中`、`大学`、`实习`、`大厂/AI`。
+- `scenario`：玩家进入该 bench 时所处的具体人生场景。
+- `measurement`：该指标的讽刺口径、范围或解释，例如 GPA 节点要说明 4.0 / 5.0 满分制只是在这里被粗暴折成比较字段。
 - `questions`：当前 benchmark 的荒诞追问。
 - `unlocks`：完成后解锁的后续节点 ID。
+- `branches`：本回合可选人生分支。每个分支需要 `id`、`label`、`scene`、`description`、`effects`、`unlocks`、`result_text`。
 - `text_on_enter` / `text_on_pass` / `text_on_fail`：系统提示文案。
 - `effects`：对各项指标的影响。
 - `absurdity`：额外荒诞度。
