@@ -6,9 +6,10 @@ type Node struct {
 	Stage       string         `json:"stage"`
 	Scenario    string         `json:"scenario,omitempty"`
 	Measurement string         `json:"measurement,omitempty"`
+	Input       InputSpec      `json:"input,omitempty"`
+	Options     []AnswerOption `json:"options,omitempty"`
 	Questions   []string       `json:"questions"`
 	Unlocks     []string       `json:"unlocks"`
-	Branches    []BranchOption `json:"branches,omitempty"`
 	TextOnEnter string         `json:"text_on_enter"`
 	TextOnPass  string         `json:"text_on_pass"`
 	TextOnFail  string         `json:"text_on_fail"`
@@ -16,14 +17,29 @@ type Node struct {
 	Absurdity   int            `json:"absurdity"`
 }
 
-type BranchOption struct {
-	ID          Action   `json:"id"`
-	Label       string   `json:"label"`
-	Scene       string   `json:"scene"`
-	Description string   `json:"description"`
-	Effects     Effects  `json:"effects"`
-	Unlocks     []string `json:"unlocks"`
-	ResultText  string   `json:"result_text"`
+type InputType string
+
+const (
+	InputTypeNumber InputType = "number"
+	InputTypeSelect InputType = "select"
+)
+
+type InputSpec struct {
+	Type        InputType `json:"type,omitempty"`
+	Prompt      string    `json:"prompt,omitempty"`
+	Placeholder string    `json:"placeholder,omitempty"`
+	Help        string    `json:"help,omitempty"`
+}
+
+type AnswerOption struct {
+	ID      string   `json:"id"`
+	Label   string   `json:"label"`
+	Min     *float64 `json:"min,omitempty"`
+	Max     *float64 `json:"max,omitempty"`
+	Verdict string   `json:"verdict"`
+	Proof   string   `json:"proof"`
+	Effects Effects  `json:"effects"`
+	Unlocks []string `json:"unlocks"`
 }
 
 type Effects struct {

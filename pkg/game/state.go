@@ -5,22 +5,37 @@ import "fmt"
 const InitialNodeID = "gaokao_score"
 
 type State struct {
-	Age              int      `json:"age"`
-	Stage            string   `json:"stage"`
-	BenchScore       int      `json:"bench_score"`
-	Anxiety          int      `json:"anxiety"`
-	Selfhood         int      `json:"selfhood"`
-	Energy           int      `json:"energy"`
-	Curiosity        int      `json:"curiosity"`
-	ParentPressure   int      `json:"parent_pressure"`
-	PeerComparison   int      `json:"peer_comparison"`
-	EscapeIndex      int      `json:"escape_index"`
-	Absurdity        int      `json:"absurdity"`
-	CompletedNodes   []string `json:"completed_nodes"`
-	UnlockedNodes    []string `json:"unlocked_nodes"`
-	EventLog         []string `json:"event_log"`
-	Turn             int      `json:"turn"`
-	VirtualStudentID string   `json:"virtual_student_id"`
+	Age              int           `json:"age"`
+	Stage            string        `json:"stage"`
+	BenchScore       int           `json:"bench_score"`
+	Anxiety          int           `json:"anxiety"`
+	Selfhood         int           `json:"selfhood"`
+	Energy           int           `json:"energy"`
+	Curiosity        int           `json:"curiosity"`
+	ParentPressure   int           `json:"parent_pressure"`
+	PeerComparison   int           `json:"peer_comparison"`
+	EscapeIndex      int           `json:"escape_index"`
+	Absurdity        int           `json:"absurdity"`
+	CompletedNodes   []string      `json:"completed_nodes"`
+	UnlockedNodes    []string      `json:"unlocked_nodes"`
+	EventLog         []string      `json:"event_log"`
+	AuditTrail       []AuditRecord `json:"audit_trail"`
+	Turn             int           `json:"turn"`
+	VirtualStudentID string        `json:"virtual_student_id"`
+}
+
+type AuditRecord struct {
+	Turn           int      `json:"turn"`
+	NodeID         string   `json:"node_id"`
+	NodeTitle      string   `json:"node_title"`
+	Stage          string   `json:"stage"`
+	Prompt         string   `json:"prompt"`
+	SubmittedLabel string   `json:"submitted_label"`
+	OptionID       string   `json:"option_id,omitempty"`
+	Verdict        string   `json:"verdict"`
+	Proof          string   `json:"proof"`
+	Effects        Effects  `json:"effects"`
+	Unlocks        []string `json:"unlocks"`
 }
 
 func NewInitialState(seed int64) State {

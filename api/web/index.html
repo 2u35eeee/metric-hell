@@ -18,10 +18,9 @@
           <span>做题流水线模拟器</span>
         </div>
         <div class="statement">
-          <p>这是一个娱乐向、讽刺向的学生 workflow 模拟项目。</p>
-          <p>它不会预测你的真实人生，也不会评价任何学校、地区、专业或职业选择。</p>
-          <p>它讽刺的是“人被无限指标化”的荒诞感。</p>
-          <p>请不要把本项目结果当成升学、就业或人生建议。如果你玩完觉得焦虑，请关闭它，然后去喝水、睡觉、散步、找朋友聊天。</p>
+          <p>这不是升学、就业或人生建议。</p>
+          <p>你只是在不断提交字段，然后看系统如何一本正经地误读你。</p>
+          <p>如果你玩完觉得焦虑，请关闭它，然后去喝水、睡觉、散步、找朋友聊天。</p>
         </div>
         <button id="startBtn" class="primary-btn" type="button">开始一局</button>
       </section>
@@ -46,19 +45,46 @@
         </aside>
 
         <section class="panel benchmark-panel">
-          <div class="panel-title">Current Benchmark</div>
-          <div id="nodeStage" class="stage-pill">高中</div>
-          <h2 id="nodeTitle">高考成绩 Benchmark</h2>
-          <p id="nodeText" class="node-text"></p>
-          <div id="nodeScenario" class="info-block"></div>
-          <div id="nodeMeasurement" class="info-block"></div>
-          <ul id="questions" class="questions"></ul>
+          <div id="inputPanel">
+            <div class="panel-title">Current Benchmark</div>
+            <div id="nodeStage" class="stage-pill">高中</div>
+            <h2 id="nodeTitle">高考成绩 Benchmark</h2>
+            <p id="nodeText" class="node-text"></p>
 
-          <form id="actionForm" class="action-form">
-            <div class="action-title">选择本回合人生分支</div>
-            <div id="actions" class="actions" role="group" aria-label="选择本回合人生分支"></div>
-            <button id="submitAction" class="primary-btn" type="submit">提交选中的人生片段</button>
-          </form>
+            <form id="submissionForm" class="submission-form">
+              <label id="inputPrompt" for="numericInput">你的高考分数是多少？</label>
+              <input id="numericInput" class="field-input" type="number" inputmode="decimal" />
+              <select id="optionInput" class="field-input hidden"></select>
+              <p id="inputHelp" class="input-help"></p>
+              <button class="primary-btn" type="submit">提交字段给系统审判</button>
+            </form>
+
+            <ul id="questionHints" class="questions"></ul>
+          </div>
+
+          <div id="auditPanel" class="audit-panel hidden">
+            <div class="panel-title">System Audit</div>
+            <div id="auditStage" class="stage-pill">系统</div>
+            <h2 id="auditTitle">本轮审计完成</h2>
+            <div class="submitted-field">
+              <span>你提交的字段</span>
+              <strong id="auditSubmitted"></strong>
+            </div>
+            <section class="audit-block">
+              <h3>系统判词</h3>
+              <p id="auditVerdict"></p>
+            </section>
+            <section class="audit-block muted">
+              <h3>证明材料</h3>
+              <p id="auditProof"></p>
+            </section>
+            <div id="auditEffects" class="action-meta"></div>
+            <div class="next-benchmark">
+              <span>下一张表</span>
+              <strong id="nextNodeName"></strong>
+            </div>
+            <button id="continueBtn" class="primary-btn" type="button">继续被 benchmark</button>
+          </div>
         </section>
 
         <aside class="panel metrics-panel">
@@ -76,17 +102,30 @@
     <main id="result" class="screen result-screen hidden">
       <section class="result-card">
         <p class="eyebrow">Final Report</p>
-        <h1 id="endingTitle">指标继续生成中</h1>
-        <p id="endingType" class="subtitle">人生完成度无法达到 100%</p>
-        <div id="resultMetrics" class="result-metrics"></div>
-        <div class="report-block">
-          <h2>系统评价</h2>
-          <p id="systemEvaluation"></p>
+        <h1 id="endingTitle">分析结果</h1>
+        <p id="endingType" class="subtitle">系统分析报告</p>
+        <div class="report-block hero-report">
+          <h2>系统判定</h2>
+          <p id="finalVerdict"></p>
         </div>
         <div class="report-block quiet">
           <h2>隐藏评价</h2>
           <p id="hiddenEvaluation"></p>
         </div>
+        <div class="report-grid">
+          <section class="report-block">
+            <h2>核心结论</h2>
+            <ul id="conclusions" class="conclusions"></ul>
+          </section>
+          <section class="report-block">
+            <h2>最终指标</h2>
+            <div id="resultMetrics" class="result-metrics"></div>
+          </section>
+        </div>
+        <section class="report-block">
+          <h2>路径回放</h2>
+          <div id="auditTrail" class="audit-trail"></div>
+        </section>
         <button id="restartBtn" class="primary-btn" type="button">重新开始</button>
       </section>
     </main>

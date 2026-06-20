@@ -2,7 +2,7 @@
 
 ## 目标
 
-实现一个可上线试玩的 Go 前后端小游戏。玩家打开 URL 后，通过下拉框选择每回合行动，体验 benchmark 不断增殖的荒诞感。
+实现一个可上线试玩的 Go 前后端小游戏。玩家打开 URL 后，每关提交一个可比较字段，系统根据字段生成讽刺性审计判词，体验 benchmark 不断增殖的荒诞感。
 
 ## 主题
 
@@ -29,21 +29,17 @@
 
 ## 玩法结构
 
-每个 benchmark 节点不是单一路线检查点，而是一个小型人生分叉：
+每个 benchmark 节点是一张要求玩家提交字段的审计表：
 
 - `scenario` 描述玩家当前处在什么具体场景里。
 - `measurement` 解释该指标到底在讽刺什么、范围/口径是什么。
+- `input` 描述本关输入，`type` 为 `number` 或 `select`，并提供 `prompt` / `placeholder` / `help`。
+- `options` 描述系统可匹配的分数桶或档位，每项包含 `label`、`verdict`、`proof`、`effects`、`unlocks`；数字桶可设置 `min` / `max`。
 - `questions` 是系统追问，用来制造“评价继续增殖”的荒诞感。
-- `branches` 是本回合可选分支，每个分支必须说明：
-  - `label`：玩家看到的选择名称。
-  - `scene`：这个选择在当前场景里意味着什么。
-  - `description`：选择后会发生什么。
-  - `effects`：对 0-100 指标面板的影响。
-  - `unlocks`：该分支进入的后续节点。
-  - `result_text`：选择后的事件日志。
+- 高考节点使用数字输入和分数桶；GPA、学校层次、厂牌、岗位、风险等节点使用档位选择。
 
-前端必须把分支展示成可读的选择卡，而不是只给一个抽象下拉框。
-指标面板必须展示中文指标名、当前值 `/100` 和讽刺解释，不应只泄露内部字段名。
+前端必须先让玩家提交字段，再展示“系统判词 / 证明材料 / 指标变化 / 下一张表”。
+指标面板是辅助信息，最终结果页必须展示分析报告和路径回放。
 
 ## API
 
@@ -58,7 +54,10 @@
 ```json
 {
   "state": {},
-  "action": "optimize_metric"
+  "submission": {
+    "node_id": "gaokao_score",
+    "numeric_value": 701
+  }
 }
 ```
 
@@ -67,20 +66,16 @@
 ```json
 {
   "state": {},
-  "current_node": {
-    "scenario": "当前人生场景",
-    "measurement": "该指标的口径/范围说明"
+  "audit_record": {
+    "node_id": "gaokao_score",
+    "node_title": "高考成绩 Benchmark",
+    "submitted_label": "701",
+    "verdict": "你要是 700 以上还认识这个开发者？系统怀疑样本来源异常。",
+    "proof": "系统把你标记为罕见样本，同时继续要求更多可比较字段。",
+    "effects": {},
+    "unlocks": ["province_rank"]
   },
-  "actions": [
-    {
-      "id": "gpa_decimal_grind",
-      "label": "把 GPA 卷到小数点后一位",
-      "scene": "你开始计算 3.6/4.0 和 3.7/4.0 的命运差异。",
-      "description": "进入简历关键词密度。",
-      "effects": {},
-      "unlocks": ["resume_keyword_density"]
-    }
-  ],
+  "current_node": {},
   "ended": false,
   "ending": null
 }
