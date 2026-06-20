@@ -20,8 +20,8 @@
 
 - Go 标准库 HTTP 服务。
 - 原生 HTML/CSS/JS 前端。
-- 下拉框选择每回合行动。
-- 无状态 API：浏览器每次把当前 `state` 发给后端，后端只计算下一步。
+- 每关提交一个可比较字段，然后由系统生成讽刺性审计判词。
+- 无状态 API：浏览器每次把当前 `state` 和本轮 `submission` 发给后端，后端只计算下一步。
 - `data/nodes.json` 配置 benchmark 节点。
 - CLI 纯文本模拟。
 - 单元测试和 benchmark。
@@ -101,9 +101,10 @@ data/nodes.json
 - `stage`：阶段，例如 `高中`、`大学`、`实习`、`大厂/AI`。
 - `scenario`：玩家进入该 bench 时所处的具体人生场景。
 - `measurement`：该指标的讽刺口径、范围或解释，例如 GPA 节点要说明 4.0 / 5.0 满分制只是在这里被粗暴折成比较字段。
+- `input`：本关输入规格，包含 `type`（`number` 或 `select`）、`prompt`、`placeholder`、`help`。
+- `options`：系统可匹配的分数桶或选择档位。每项需要 `id`、`label`、`verdict`、`proof`、`effects`、`unlocks`；数字桶可额外设置 `min` / `max`。
 - `questions`：当前 benchmark 的荒诞追问。
 - `unlocks`：完成后解锁的后续节点 ID。
-- `branches`：本回合可选人生分支。每个分支需要 `id`、`label`、`scene`、`description`、`effects`、`unlocks`、`result_text`。
 - `text_on_enter` / `text_on_pass` / `text_on_fail`：系统提示文案。
 - `effects`：对各项指标的影响。
 - `absurdity`：额外荒诞度。
@@ -121,6 +122,7 @@ go test ./...
 可以讽刺：
 
 - “系统把专业翻译成岗位关键词。”
+- “第一学历过滤器把清北、华五、C9、985、211、双非和 QS100 折成入口字段。”
 - “拿到实习后系统继续识别厂牌 tier。”
 - “进入 BigFactory 后系统继续追问岗位、转正率、裁员风险和 AI 替代概率。”
 

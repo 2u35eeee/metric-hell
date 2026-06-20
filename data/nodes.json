@@ -3,495 +3,536 @@
     "id": "gaokao_score",
     "title": "高考成绩 Benchmark",
     "stage": "高中",
-    "scenario": "你刚从考场出来，系统没有问你累不累，只问这个分数能不能被快速比较、转发和解释。",
-    "measurement": "分数区间不是重点；讽刺对象是“一个数字临时解释一个人”。系统默认把所有结果压到 0-100 的可排序分。",
+    "scenario": "系统不关心你考完有没有睡着，只关心这个数字能不能立刻进入比较链。",
+    "measurement": "输入 0-750 的虚构高考分数。分数不用于现实建议，只用于讽刺系统如何把人压缩成一个入口字段。",
+    "input": {
+      "type": "number",
+      "prompt": "你的高考分数是多少？",
+      "placeholder": "例如 612",
+      "help": "输入一个 0-750 的虚构分数；系统会按区间强行归类。"
+    },
     "questions": [
-      "分数够高吗？",
-      "该分数是否适合被截图转发？",
-      "系统是否可以用一个数字临时解释你？"
+      "这个数字是否足够截图传播？",
+      "它能不能暂时代替你的全部叙事？",
+      "系统是否准备继续索要位次？"
     ],
     "unlocks": [
       "province_rank"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "gaokao_publish_rank",
-        "label": "把分数切成更细排名",
-        "scene": "你把“考得还行”翻译成分数、位次和可截图字段。",
-        "description": "系统进入省排名精度校准；比较分辨率上升，自我叙事变薄。",
+        "id": "score_lt_450",
+        "label": "<450",
+        "max": 449,
+        "verdict": "系统判定：该数字不适合被亲戚群转发，但很适合被继续追问。",
+        "proof": "系统没有读取你的生活，只读取到一个“不便展示”的字段，于是自动生成补救型 benchmark。",
         "effects": {
-          "bench_score": 4,
-          "anxiety": 4,
+          "bench_score": 0,
+          "anxiety": 12,
           "selfhood": -2,
-          "energy": 0,
+          "energy": -4,
           "curiosity": 0,
-          "parent_pressure": 0,
-          "peer_comparison": 6,
+          "parent_pressure": 8,
+          "peer_comparison": 0,
           "escape_index": 0,
-          "absurdity": 0
+          "absurdity": 6
         },
         "unlocks": [
           "province_rank"
-        ],
-        "result_text": "你提交了更细排名。系统满意地发现：一个人还能继续拆小。"
+        ]
       },
       {
-        "id": "gaokao_keep_question",
-        "label": "保留一个还没被排名解释的问题",
-        "scene": "你没有立刻把自己交给位次，而是问：我到底想学什么？",
-        "description": "绕开排名精修，进入专业转译；好奇心上升，但系统会觉得你不够整齐。",
-        "effects": {
-          "bench_score": -3,
-          "anxiety": 2,
-          "selfhood": 0,
-          "energy": 0,
-          "curiosity": 8,
-          "parent_pressure": 0,
-          "peer_comparison": 0,
-          "escape_index": 5,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "major_translation"
-        ],
-        "result_text": "你保留了一个问题。系统将其标记为：暂不可排序，但值得追踪。"
-      }
-    ],
-    "text_on_enter": "系统检测到你进入高考成绩节点。请提交一个可被排序的人生片段。",
-    "text_on_pass": "你完成了高考成绩 Benchmark。系统没有宣布结束，只是打开了排名精度面板。",
-    "text_on_fail": "系统无法处理非数字化表达，正在请求更多字段。",
-    "effects": {
-      "bench_score": 18,
-      "anxiety": 12,
-      "selfhood": -4,
-      "energy": -8,
-      "curiosity": -2,
-      "parent_pressure": 8,
-      "peer_comparison": 8,
-      "escape_index": -3,
-      "absurdity": 6
-    },
-    "absurdity": 4
-  },
-  {
-    "id": "province_rank",
-    "title": "省排名精度校准",
-    "stage": "高中",
-    "scenario": "分数已经不够用了，亲戚群和志愿表开始要求更细的位次、同分人数和可传播结论。",
-    "measurement": "位次字段通常被读成“越小越好”，但本游戏只模拟比较机制，不要求真实省份、真实分数或真实排名。",
-    "questions": [
-      "同分人数是多少？",
-      "排名能否精确到足够让亲戚听懂？",
-      "分数之后是否还有更细的比较维度？"
-    ],
-    "unlocks": [
-      "university_tier",
-      "major_translation"
-    ],
-    "branches": [
-      {
-        "id": "rank_to_university_tier",
-        "label": "用位次换一个学校 tier",
-        "scene": "志愿表打开，你开始把城市、学校和亲戚可理解度放进同一个公式。",
-        "description": "进入大学档次 Benchmark；可排序性上升，同辈比较加剧。",
+        "id": "score_450_599",
+        "label": "450-599",
+        "min": 450,
+        "max": 599,
+        "verdict": "系统判定：字段处于可解释但不可炫耀区间，请补充排名、志愿和“还有没有机会”。",
+        "proof": "系统认为中间段最适合制造比较，因为每一分都能被讲成命运岔路。",
         "effects": {
           "bench_score": 6,
-          "anxiety": 4,
+          "anxiety": 10,
           "selfhood": 0,
           "energy": 0,
           "curiosity": 0,
-          "parent_pressure": 4,
+          "parent_pressure": 6,
           "peer_comparison": 7,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
-          "university_tier"
-        ],
-        "result_text": "位次被成功折算成 tier。系统说：字段终于像字段了。"
+          "province_rank"
+        ]
       },
       {
-        "id": "rank_to_major_question",
-        "label": "先问专业到底在学什么",
-        "scene": "你没有只问“去哪”，而是问“我会在里面做什么”。",
-        "description": "进入专业可转译性审计；好奇心上升，但系统会继续要求岗位映射。",
+        "id": "score_600_679",
+        "label": "600-679",
+        "min": 600,
+        "max": 679,
+        "verdict": "系统判定：分数开始体面，焦虑也开始精细化。",
+        "proof": "系统已经不满足于“高不高”，它现在要问省排名、学校层次和专业热度。",
         "effects": {
-          "bench_score": -2,
-          "anxiety": 0,
-          "selfhood": 4,
+          "bench_score": 12,
+          "anxiety": 8,
+          "selfhood": -2,
           "energy": 0,
-          "curiosity": 8,
+          "curiosity": 0,
           "parent_pressure": 0,
+          "peer_comparison": 8,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "province_rank"
+        ]
+      },
+      {
+        "id": "score_680_699",
+        "label": "680-699",
+        "min": 680,
+        "max": 699,
+        "verdict": "系统判定：接近传说区间，但比较器仍然发现了小数点后的遗憾。",
+        "proof": "系统把优秀解释成“差一点更优秀”，并要求提交更高分辨率的排名证明。",
+        "effects": {
+          "bench_score": 18,
+          "anxiety": 9,
+          "selfhood": 0,
+          "energy": -3,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 12,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "province_rank"
+        ]
+      },
+      {
+        "id": "score_700_plus",
+        "label": "700+",
+        "min": 700,
+        "verdict": "你要是 700 以上还认识这个开发者？系统怀疑样本来源异常。",
+        "proof": "系统把你标记为罕见样本，同时继续要求第一学历、GPA、实习和厂牌证明你没有侥幸。",
+        "effects": {
+          "bench_score": 24,
+          "anxiety": 8,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 14,
+          "escape_index": 0,
+          "absurdity": 8
+        },
+        "unlocks": [
+          "province_rank"
+        ]
+      }
+    ],
+    "text_on_enter": "系统检测到高考成绩节点。请提交一个可以被排序的入口数字。",
+    "text_on_pass": "高考数字已入库。系统没有祝贺，只是打开了位次精度表。",
+    "text_on_fail": "分数无法解析。系统要求你重新提供一个更像数字的人生片段。",
+    "effects": {
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
+    },
+    "absurdity": 1
+  },
+  {
+    "id": "province_rank",
+    "title": "省排名精度校准",
+    "stage": "高中",
+    "scenario": "分数已经不够用了，系统开始索要位次，仿佛精确到多少名就能解释更多人生。",
+    "measurement": "选择虚构省排名区间。这里不涉及真实省份，只讽刺“排名越细，焦虑越精确”。",
+    "input": {
+      "type": "select",
+      "prompt": "你的省排名大概落在哪个区间？",
+      "placeholder": "",
+      "help": "选择一个区间，系统会把它翻译成更细的比较权限。"
+    },
+    "questions": [
+      "同分人数是多少？",
+      "位次能不能让志愿表自动安静？",
+      "系统是否开始想要第一学历字段？"
+    ],
+    "unlocks": [
+      "university_tier"
+    ],
+    "options": [
+      {
+        "id": "rank_top_500",
+        "label": "前 500",
+        "verdict": "系统判定：位次漂亮，但漂亮数字也只是下一张表的入场券。",
+        "proof": "系统立刻开始追问学校层次，因为它永远不允许字段停在好看。",
+        "effects": {
+          "bench_score": 18,
+          "anxiety": 6,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 10,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "university_tier"
+        ]
+      },
+      {
+        "id": "rank_top_5000",
+        "label": "前 5000",
+        "verdict": "系统判定：足够被认真比较，不足以逃离比较。",
+        "proof": "系统开始把你送进学校 tier，准备把位次换成第一学历标签。",
+        "effects": {
+          "bench_score": 14,
+          "anxiety": 8,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 9,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "university_tier"
+        ]
+      },
+      {
+        "id": "rank_top_20000",
+        "label": "前 20000",
+        "verdict": "系统判定：位次进入解释型区间，请准备补交城市、专业和调剂叙事。",
+        "proof": "系统认为这个区间最适合被“如果当时多几分”反复消费。",
+        "effects": {
+          "bench_score": 8,
+          "anxiety": 11,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 8,
+          "peer_comparison": 8,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "university_tier"
+        ]
+      },
+      {
+        "id": "rank_later",
+        "label": "更靠后/不想说",
+        "verdict": "系统判定：字段不够好看，但焦虑生产效率很高。",
+        "proof": "系统把“不想说”识别成“需要更多证明材料”。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 14,
+          "selfhood": -3,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 10,
           "peer_comparison": 0,
           "escape_index": 3,
           "absurdity": 0
         },
         "unlocks": [
-          "major_translation"
-        ],
-        "result_text": "你把问题从排名挪到内容。系统短暂失去了一列。"
+          "university_tier"
+        ]
       }
     ],
-    "text_on_enter": "系统提示：分数已录入，但单一数字无法满足比较需求。",
-    "text_on_pass": "省排名字段已生成。系统正在把你送入更高分辨率的大学筛选器。",
-    "text_on_fail": "排名精度不足。系统决定增加更多表格。",
+    "text_on_enter": "系统提示：分数只是粗筛，位次才是更细的入口折磨。",
+    "text_on_pass": "位次字段已生成。系统开始请求第一学历过滤器。",
+    "text_on_fail": "位次字段缺失。系统会用更粗暴的标签补齐。",
     "effects": {
-      "bench_score": 10,
-      "anxiety": 10,
-      "selfhood": -3,
-      "energy": -6,
-      "curiosity": -1,
-      "parent_pressure": 6,
-      "peer_comparison": 12,
-      "escape_index": -2,
-      "absurdity": 7
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 5
+    "absurdity": 1
   },
   {
     "id": "university_tier",
-    "title": "大学档次 Benchmark",
+    "title": "大学层次过滤器",
     "stage": "大学",
-    "scenario": "录取结果出现后，系统试图把一所学校压缩成一个 tier，再把 tier 当成你的临时人格。",
-    "measurement": "Tier 是系统偷懒用的抽象标签，不对应任何真实学校评价；范围只有“更容易被比较”和“更难被比较”。",
+    "scenario": "录取结果出现后，系统立刻把学校压缩成一个入口标签，再假装这是理解你的捷径。",
+    "measurement": "选择抽象层次，不填写真实学校名。这里讽刺第一学历迷信和筛选器偷懒，不评价任何学校或学生。",
+    "input": {
+      "type": "select",
+      "prompt": "你的第一学历层次被系统归到哪一栏？",
+      "placeholder": "",
+      "help": "选择社会排序标签；系统会暴露它如何偷懒。"
+    },
     "questions": [
-      "学校是否能被压缩成 tier？",
-      "平台字段是否能覆盖人的复杂性？",
-      "系统是否已经忘记你为什么想学习？"
+      "第一学历是否可以替你说完一句话？",
+      "筛选器是否愿意读第二行？",
+      "系统是不是已经忘了你到底学了什么？"
     ],
     "unlocks": [
-      "major_heat_rank",
-      "oversea_track"
+      "major_translation"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "school_tier_chase_heat",
-        "label": "继续追学校与专业热度组合",
-        "scene": "你试图找出最容易被别人点头的组合。",
-        "description": "进入专业热度排名；面板更整齐，焦虑更稳定。",
+        "id": "top2",
+        "label": "清北/Top2",
+        "verdict": "系统记录：Top2 字段点亮。补充提示：还不是分不清鹅腿和鸭腿？",
+        "proof": "第一学历过滤器暂时收起白眼，但马上请求 GPA、实习和厂牌继续证明你。",
         "effects": {
-          "bench_score": 5,
-          "anxiety": 5,
+          "bench_score": 22,
+          "anxiety": 7,
           "selfhood": 0,
           "energy": 0,
-          "curiosity": -2,
+          "curiosity": 0,
           "parent_pressure": 0,
-          "peer_comparison": 6,
+          "peer_comparison": 14,
+          "escape_index": 0,
+          "absurdity": 8
+        },
+        "unlocks": [
+          "major_translation"
+        ]
+      },
+      {
+        "id": "huawu",
+        "label": "华五",
+        "verdict": "系统提示：非常优秀，但本轮筛选器正在卡 Top2。",
+        "proof": "系统把“已经很强”翻译成“还可以继续比较”，并自动生成一格遗憾。",
+        "effects": {
+          "bench_score": 19,
+          "anxiety": 9,
+          "selfhood": -2,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 13,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
-          "major_heat_rank"
-        ],
-        "result_text": "学校 tier 与专业热度开始合并。系统生成了更像广告页的比较表。"
+          "major_translation"
+        ]
       },
       {
-        "id": "school_tier_oversea",
-        "label": "把出发也换算成含金量",
-        "scene": "你打开出国路线，系统立刻询问项目、地区、语言和预算的可排序性。",
-        "description": "进入出国档次 Benchmark；好奇心和压力一起上升。",
+        "id": "c9",
+        "label": "C9",
+        "verdict": "系统识别到 C9 标签。你嘻哈的吧，联盟名已被 HR 当成验证码。",
+        "proof": "系统对联盟缩写产生短暂敬畏，随后继续索要 GPA 和厂牌。",
         "effects": {
-          "bench_score": 3,
-          "anxiety": 5,
+          "bench_score": 17,
+          "anxiety": 9,
           "selfhood": 0,
           "energy": 0,
-          "curiosity": 5,
-          "parent_pressure": 5,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 12,
+          "escape_index": 0,
+          "absurdity": 7
+        },
+        "unlocks": [
+          "major_translation"
+        ]
+      },
+      {
+        "id": "p985",
+        "label": "985",
+        "verdict": "系统显示：985 可高亮，但不是免检码，请继续提交可被比较的证据。",
+        "proof": "筛选器给你一个蓝色勾，但勾后面还有专业、绩点、实习和岗位序列。",
+        "effects": {
+          "bench_score": 15,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 10,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "major_translation"
+        ]
+      },
+      {
+        "id": "p211",
+        "label": "211",
+        "verdict": "系统显示：差一点就能在亲戚群自动加粗，现在请用更多字段补齐。",
+        "proof": "系统把学校标签读成半格通行证，并要求后续字段负责补光。",
+        "effects": {
+          "bench_score": 10,
+          "anxiety": 12,
+          "selfhood": -3,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 8,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "major_translation"
+        ]
+      },
+      {
+        "id": "double_non",
+        "label": "双非",
+        "verdict": "系统启动第一学历滤镜：不是你不行，是这张表懒得读第二行。",
+        "proof": "系统把复杂经历压成入口字段，并要求你用更多证据补交解释权。",
+        "effects": {
+          "bench_score": 4,
+          "anxiety": 15,
+          "selfhood": -5,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 5,
+          "absurdity": 8
+        },
+        "unlocks": [
+          "major_translation"
+        ]
+      },
+      {
+        "id": "qs100",
+        "label": "海外 QS100",
+        "verdict": "系统检测到 QS100，开始把城市、学费和排名折叠成含金量。",
+        "proof": "系统不懂课程内容，但很懂把世界地图压成榜单。",
+        "effects": {
+          "bench_score": 16,
+          "anxiety": 11,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 4,
+          "peer_comparison": 10,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "oversea_track"
+        ]
+      },
+      {
+        "id": "non_qs100",
+        "label": "海外非 QS100",
+        "verdict": "系统提示：海归字段存在，但排名光环不足，请补充项目、语言和故事性。",
+        "proof": "系统把远方也做成一张表，没进 QS100 就继续追问“那为什么去”。",
+        "effects": {
+          "bench_score": 8,
+          "anxiety": 13,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 4,
+          "parent_pressure": 6,
           "peer_comparison": 0,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
           "oversea_track"
-        ],
-        "result_text": "出发被系统重命名为：跨境 tier 迁移。"
+        ]
       }
     ],
-    "text_on_enter": "系统正在读取学校字段。注意：本项目不评价任何真实学校。",
-    "text_on_pass": "大学档次字段已记录。系统继续请求专业热度与出国档次。",
-    "text_on_fail": "学校字段无法归一化。系统正在生成抽象 tier 以便继续排序。",
+    "text_on_enter": "系统正在读取第一学历字段。注意：这里讽刺筛选器，不评价真实学校。",
+    "text_on_pass": "第一学历字段已入库。系统开始转向专业和岗位映射。",
+    "text_on_fail": "学校层次无法归一化。系统决定更粗暴地生成标签。",
     "effects": {
-      "bench_score": 12,
-      "anxiety": 8,
-      "selfhood": -4,
-      "energy": -5,
-      "curiosity": -2,
-      "parent_pressure": 4,
-      "peer_comparison": 10,
-      "escape_index": -2,
-      "absurdity": 8
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 6
+    "absurdity": 2
   },
   {
     "id": "major_translation",
     "title": "专业可转译性审计",
     "stage": "大学",
-    "scenario": "专业名称被送进招聘翻译器，热爱、偶然和探索都要先变成岗位关键词。",
-    "measurement": "转译度表示专业名称能否被招聘系统读成岗位关键词；0-100，越高越像标准简历模板。",
+    "scenario": "专业名称被送进招聘翻译器，系统试图把兴趣和课程改写成岗位关键词。",
+    "measurement": "选择专业被岗位系统读懂的难度。这里不评价专业，只讽刺“万物都要转译成就业关键词”。",
+    "input": {
+      "type": "select",
+      "prompt": "你的专业有多容易被翻译成岗位关键词？",
+      "placeholder": "",
+      "help": "选择系统眼里的可转译程度。"
+    },
     "questions": [
-      "你的专业能否被翻译成岗位关键词？",
-      "兴趣是否可以被转换成可投递方向？",
-      "系统是否允许无法映射的热爱存在？"
+      "专业能否被翻译成岗位关键词？",
+      "兴趣是否能被转换成投递方向？",
+      "无法映射的热爱有没有资格存在？"
     ],
     "unlocks": [
-      "portfolio_packaging"
+      "major_heat_rank"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "major_to_portfolio",
-        "label": "把兴趣包装成项目证据",
-        "scene": "你把课堂、社团和随手做的东西整理成“可展示产出”。",
-        "description": "进入项目包装 Benchmark；可展示性上升，过程被压缩。",
+        "id": "major_direct_cs",
+        "label": "直接命中热门岗位",
+        "verdict": "系统判定：专业名称可以直接贴到招聘网站，恭喜你暂时像一个标准字段。",
+        "proof": "系统不问你学得如何，只看到关键词命中率足够高。",
         "effects": {
-          "bench_score": 4,
-          "anxiety": 0,
-          "selfhood": -1,
-          "energy": -4,
-          "curiosity": 4,
-          "parent_pressure": 0,
-          "peer_comparison": 0,
-          "escape_index": 0,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "portfolio_packaging"
-        ],
-        "result_text": "兴趣被打包成项目。系统提醒：请补充量化影响。"
-      },
-      {
-        "id": "major_to_heat_rank",
-        "label": "查询这个专业到底热不热",
-        "scene": "你开始搜索“前景”“薪资”“天坑”“风口”，搜索框比你更像指南针。",
-        "description": "进入专业热度排名；同辈比较上升，好奇心下降。",
-        "effects": {
-          "bench_score": 4,
-          "anxiety": 5,
+          "bench_score": 14,
+          "anxiety": 7,
           "selfhood": 0,
           "energy": 0,
           "curiosity": -3,
           "parent_pressure": 0,
-          "peer_comparison": 5,
+          "peer_comparison": 8,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
           "major_heat_rank"
-        ],
-        "result_text": "专业被送入热度榜。系统把“适合吗”翻译成“火不火”。"
-      }
-    ],
-    "text_on_enter": "系统检测到专业字段。正在尝试把它翻译成招聘网站可识别的词。",
-    "text_on_pass": "专业转译完成。系统提醒：不是所有热爱都能进入下拉框。",
-    "text_on_fail": "专业暂未命中默认岗位映射表。系统将继续请求项目包装材料。",
-    "effects": {
-      "bench_score": 6,
-      "anxiety": 9,
-      "selfhood": -2,
-      "energy": -4,
-      "curiosity": 2,
-      "parent_pressure": 3,
-      "peer_comparison": 7,
-      "escape_index": 1,
-      "absurdity": 9
-    },
-    "absurdity": 7
-  },
-  {
-    "id": "major_heat_rank",
-    "title": "专业热度排名",
-    "stage": "大学",
-    "scenario": "专业被放进热度榜，系统开始把“流行”“适合”“有价值”混成同一个字段。",
-    "measurement": "热度不是价值。这里的“热”只表示系统更容易用流行叙事解释你。",
-    "questions": [
-      "该专业是否足够热门？",
-      "热门是否等于适合？",
-      "系统是否把流行误读为答案？"
-    ],
-    "unlocks": [
-      "gpa_loop"
-    ],
-    "branches": [
+        ]
+      },
       {
-        "id": "heat_to_gpa",
-        "label": "用 GPA 证明自己没选错",
-        "scene": "热度榜无法给安全感，于是系统要求绩点字段接管。",
-        "description": "进入 GPA 字段维护；BenchScore 上升，精力下降。",
+        "id": "major_adjacent",
+        "label": "需要包装后命中",
+        "verdict": "系统判定：专业需要翻译，但还没到无法解释。",
+        "proof": "系统建议你把课程名改写成项目名，把兴趣改写成可投递方向。",
         "effects": {
-          "bench_score": 5,
-          "anxiety": 5,
-          "selfhood": -2,
-          "energy": -5,
+          "bench_score": 8,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": -4,
           "curiosity": 0,
           "parent_pressure": 0,
           "peer_comparison": 0,
           "escape_index": 0,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "gpa_loop"
-        ],
-        "result_text": "专业热度不足以安抚系统。GPA 字段被推到前台。"
-      },
-      {
-        "id": "heat_to_contest",
-        "label": "用竞赛给专业补权重",
-        "scene": "你试图让一个奖项替你解释专业选择。",
-        "description": "进入竞赛权重白名单；比较维度变多，荒诞感上升。",
-        "effects": {
-          "bench_score": 3,
-          "anxiety": 4,
-          "selfhood": 0,
-          "energy": 0,
-          "curiosity": 0,
-          "parent_pressure": 0,
-          "peer_comparison": 5,
-          "escape_index": 0,
-          "absurdity": 4
-        },
-        "unlocks": [
-          "contest_weight"
-        ],
-        "result_text": "系统开始查询竞赛白名单。热爱被送去排队盖章。"
-      }
-    ],
-    "text_on_enter": "系统正在查询专业热度。注意：热度不是价值判断。",
-    "text_on_pass": "专业热度字段已生成。系统开始维护 GPA 字段。",
-    "text_on_fail": "专业热度未达预期。系统建议追加更多可比较材料。",
-    "effects": {
-      "bench_score": 7,
-      "anxiety": 8,
-      "selfhood": -3,
-      "energy": -4,
-      "curiosity": -2,
-      "parent_pressure": 4,
-      "peer_comparison": 8,
-      "escape_index": -1,
-      "absurdity": 7
-    },
-    "absurdity": 5
-  },
-  {
-    "id": "oversea_track",
-    "title": "出国档次 Benchmark",
-    "stage": "大学",
-    "scenario": "你考虑出国，系统立刻把语言、项目、城市和学校折叠成一串可比较的含金量。",
-    "measurement": "含金量字段是讽刺性的，不评价国家、地区或学校；系统只是把复杂选择折成可比较字符串。",
-    "questions": [
-      "项目是否足够有名？",
-      "地区、学校、项目能否组成一个可排序字符串？",
-      "出发是否也要先换算成含金量？"
-    ],
-    "unlocks": [
-      "contest_weight"
-    ],
-    "branches": [
-      {
-        "id": "oversea_to_contest",
-        "label": "补一段可跨境识别的竞赛",
-        "scene": "你发现项目介绍需要一个全球都看得懂的奖项缩写。",
-        "description": "进入竞赛权重白名单；可识别性上升，疲惫上升。",
-        "effects": {
-          "bench_score": 4,
-          "anxiety": 4,
-          "selfhood": 0,
-          "energy": -5,
-          "curiosity": 0,
-          "parent_pressure": 0,
-          "peer_comparison": 4,
-          "escape_index": 0,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "contest_weight"
-        ],
-        "result_text": "系统找到新的国际化字段：奖项缩写。"
-      },
-      {
-        "id": "oversea_to_portfolio",
-        "label": "做一个不用翻译太多的作品集",
-        "scene": "你试图让作品先说话，系统则追问它的排名、访问量和影响力。",
-        "description": "进入项目包装 Benchmark；好奇心上升，包装压力上升。",
-        "effects": {
-          "bench_score": 2,
-          "anxiety": 3,
-          "selfhood": 0,
-          "energy": 0,
-          "curiosity": 6,
-          "parent_pressure": 0,
-          "peer_comparison": 0,
-          "escape_index": 2,
-          "absurdity": 0
+          "absurdity": 5
         },
         "unlocks": [
           "portfolio_packaging"
-        ],
-        "result_text": "作品集被上传。系统立即要求把过程改写成成果。"
-      }
-    ],
-    "text_on_enter": "系统检测到出国选项。正在把语言、项目与城市折叠成一个 tier。",
-    "text_on_pass": "出国档次字段已生成。系统继续审计竞赛权重。",
-    "text_on_fail": "系统无法判断该路径的默认排序，正在生成补充指标。",
-    "effects": {
-      "bench_score": 8,
-      "anxiety": 8,
-      "selfhood": -2,
-      "energy": -5,
-      "curiosity": 4,
-      "parent_pressure": 5,
-      "peer_comparison": 7,
-      "escape_index": 2,
-      "absurdity": 8
-    },
-    "absurdity": 6
-  },
-  {
-    "id": "gpa_loop",
-    "title": "GPA 字段维护",
-    "stage": "大学",
-    "scenario": "学期结束，课程体验被折叠成 GPA。系统不关心你在哪门课里醒过来，只关心字段是否稳定。",
-    "measurement": "GPA 常见满分制可能是 4.0 或 5.0；本游戏不采集真实 GPA，只讽刺它被粗暴换算成排名代理变量。",
-    "questions": [
-      "绩点是否足够被算法放心排序？",
-      "排名是否比课程内容更容易传播？",
-      "你还记得哪门课让你好奇吗？"
-    ],
-    "unlocks": [
-      "resume_keyword_density"
-    ],
-    "branches": [
-      {
-        "id": "gpa_decimal_grind",
-        "label": "把 GPA 卷到小数点后一位",
-        "scene": "你开始计算 3.6/4.0 和 3.7/4.0 在不同表格里的命运差异。",
-        "description": "进入简历关键词密度；BenchScore 上升，焦虑和疲惫上升。",
-        "effects": {
-          "bench_score": 6,
-          "anxiety": 7,
-          "selfhood": 0,
-          "energy": -7,
-          "curiosity": -4,
-          "parent_pressure": 0,
-          "peer_comparison": 5,
-          "escape_index": 0,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "resume_keyword_density"
-        ],
-        "result_text": "GPA 字段被维护到更稳定。系统没有问你学到了什么。"
+        ]
       },
       {
-        "id": "gpa_contextualize",
-        "label": "承认 GPA 只是一个范围信号",
-        "scene": "你把 GPA 放回课程、项目和兴趣的上下文里，而不是让它单独审判你。",
-        "description": "进入项目包装；自我感和好奇心上升，排序分下降。",
+        "id": "major_hard_to_map",
+        "label": "很难映射到岗位",
+        "verdict": "系统判定：该专业暂未命中默认表格，正在请求更多自证材料。",
+        "proof": "系统不是看不见你，它只是懒得升级 schema。",
         "effects": {
-          "bench_score": -4,
-          "anxiety": -2,
-          "selfhood": 7,
+          "bench_score": 0,
+          "anxiety": 13,
+          "selfhood": -3,
           "energy": 0,
-          "curiosity": 6,
+          "curiosity": 5,
           "parent_pressure": 0,
           "peer_comparison": 0,
           "escape_index": 4,
@@ -499,73 +540,411 @@
         },
         "unlocks": [
           "portfolio_packaging"
-        ],
-        "result_text": "你给 GPA 加了上下文。系统抱怨：上下文不利于排序。"
+        ]
+      }
+    ],
+    "text_on_enter": "系统检测到专业字段。正在尝试把它翻译成招聘网站可识别的词。",
+    "text_on_pass": "专业转译完成。系统提醒：不是所有热爱都能进入下拉框。",
+    "text_on_fail": "专业暂未命中默认岗位映射表。系统将继续请求项目包装材料。",
+    "effects": {
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
+    },
+    "absurdity": 1
+  },
+  {
+    "id": "major_heat_rank",
+    "title": "专业热度排名",
+    "stage": "大学",
+    "scenario": "专业被放进热度榜，系统开始把“流行”“适合”“有价值”混成同一个字段。",
+    "measurement": "选择系统眼中的热度区间。热度不是价值，只是比较器更容易传播的标签。",
+    "input": {
+      "type": "select",
+      "prompt": "你的专业在系统眼里热不热？",
+      "placeholder": "",
+      "help": "选择一个热度档，系统会把它当成前景代理变量。"
+    },
+    "questions": [
+      "热门是否等于适合？",
+      "冷门是否等于失败？",
+      "系统是不是把流行误读成答案？"
+    ],
+    "unlocks": [
+      "gpa_loop"
+    ],
+    "options": [
+      {
+        "id": "major_hot",
+        "label": "风口/热门",
+        "verdict": "系统判定：热度足够，允许你暂时拥有“前景”二字。",
+        "proof": "系统把流行趋势当作人生答案，并忽略你是否真的喜欢。",
+        "effects": {
+          "bench_score": 13,
+          "anxiety": 8,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": -4,
+          "parent_pressure": 0,
+          "peer_comparison": 10,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "gpa_loop"
+        ]
+      },
+      {
+        "id": "major_stable",
+        "label": "稳定但不性感",
+        "verdict": "系统判定：可解释，但不适合做封面标题。",
+        "proof": "系统要求你用 GPA 和证书把稳定讲得更像增长。",
+        "effects": {
+          "bench_score": 8,
+          "anxiety": 9,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 4,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "gpa_loop"
+        ]
+      },
+      {
+        "id": "major_cold",
+        "label": "冷门/难解释",
+        "verdict": "系统判定：热度不足，请增加叙事密度。",
+        "proof": "系统不是讨厌冷门，它只是讨厌不能一眼比较。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 12,
+          "selfhood": 2,
+          "energy": 0,
+          "curiosity": 5,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 4,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "contest_weight"
+        ]
+      }
+    ],
+    "text_on_enter": "系统正在查询专业热度。注意：热度不是价值判断。",
+    "text_on_pass": "专业热度字段已生成。系统开始维护 GPA 字段。",
+    "text_on_fail": "专业热度未达预期。系统建议追加更多可比较材料。",
+    "effects": {
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
+    },
+    "absurdity": 1
+  },
+  {
+    "id": "oversea_track",
+    "title": "出国档次 Benchmark",
+    "stage": "大学",
+    "scenario": "出国选择被系统折叠成排名、地区、项目和预算的综合含金量。",
+    "measurement": "选择抽象海外项目层次，不填写真实学校。这里讽刺排名崇拜，不评价国家、地区或学校。",
+    "input": {
+      "type": "select",
+      "prompt": "你的海外路径被系统归到哪一档？",
+      "placeholder": "",
+      "help": "选择一个抽象档位，系统会继续比较。"
+    },
+    "questions": [
+      "排名能否解释出发？",
+      "城市和项目是否能组成一个可排序字符串？",
+      "出发是否也要先换算成含金量？"
+    ],
+    "unlocks": [
+      "gpa_loop"
+    ],
+    "options": [
+      {
+        "id": "oversea_qs50",
+        "label": "QS50 以内",
+        "verdict": "系统判定：排名光环强，开始自动把城市、项目和学费打包成含金量。",
+        "proof": "系统不懂你为什么出发，但很懂把远方压成榜单。",
+        "effects": {
+          "bench_score": 18,
+          "anxiety": 9,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 4,
+          "peer_comparison": 12,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "gpa_loop"
+        ]
+      },
+      {
+        "id": "oversea_qs100",
+        "label": "QS51-100",
+        "verdict": "系统判定：QS100 字段可用，但仍需补充项目强度与就业叙事。",
+        "proof": "系统把“世界”缩小到两位数排名，再要求你解释每一位。",
+        "effects": {
+          "bench_score": 14,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 10,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "gpa_loop"
+        ]
+      },
+      {
+        "id": "oversea_other",
+        "label": "海外非 QS100",
+        "verdict": "系统判定：海外字段存在，榜单护盾不足。",
+        "proof": "系统开始追问为什么去、值不值、能不能回本，仿佛人生是 Excel IRR。",
+        "effects": {
+          "bench_score": 7,
+          "anxiety": 14,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 4,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 7
+        },
+        "unlocks": [
+          "portfolio_packaging"
+        ]
+      }
+    ],
+    "text_on_enter": "系统检测到出国选项。正在把语言、项目与城市折叠成一个 tier。",
+    "text_on_pass": "出国档次字段已生成。系统继续审计 GPA 或作品材料。",
+    "text_on_fail": "系统无法判断该路径的默认排序，正在生成补充指标。",
+    "effects": {
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
+    },
+    "absurdity": 1
+  },
+  {
+    "id": "gpa_loop",
+    "title": "GPA 字段维护",
+    "stage": "大学",
+    "scenario": "学期结束，课程体验被折叠成 GPA。系统不关心哪门课点亮你，只关心字段是否稳定。",
+    "measurement": "GPA 常见满分制可能是 4.0 或 5.0；本游戏只按区间讽刺它如何被粗暴换算成排名代理变量。",
+    "input": {
+      "type": "select",
+      "prompt": "你的 GPA 大概在哪个区间？",
+      "placeholder": "",
+      "help": "按 4.0/5.0 语境自行折算到相近档位，不需要真实精确值。"
+    },
+    "questions": [
+      "绩点足够被算法放心排序吗？",
+      "排名是否比课程内容更容易传播？",
+      "你还记得哪门课让你好奇吗？"
+    ],
+    "unlocks": [
+      "resume_keyword_density"
+    ],
+    "options": [
+      {
+        "id": "gpa_lt_28",
+        "label": "<2.8",
+        "verdict": "系统判定：GPA 字段不适合正面展示，请立刻补充项目、竞赛或解释权。",
+        "proof": "系统把一次或几次课程结果读成长期人格，然后假装这叫客观。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 15,
+          "selfhood": -5,
+          "energy": -5,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 4,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "portfolio_packaging"
+        ]
+      },
+      {
+        "id": "gpa_28_33",
+        "label": "2.8-3.3",
+        "verdict": "系统判定：字段尚可解释，但需要更多关键词遮光。",
+        "proof": "系统建议你把简历重心转向项目、动词和数字。",
+        "effects": {
+          "bench_score": 5,
+          "anxiety": 11,
+          "selfhood": 0,
+          "energy": -4,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "resume_keyword_density"
+        ]
+      },
+      {
+        "id": "gpa_33_36",
+        "label": "3.3-3.6",
+        "verdict": "系统判定：安全区间，但安全不等于不用继续卷。",
+        "proof": "系统开始追问排名百分比，因为一个数字永远不够精确。",
+        "effects": {
+          "bench_score": 10,
+          "anxiety": 9,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 8,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "resume_keyword_density"
+        ]
+      },
+      {
+        "id": "gpa_36_38",
+        "label": "3.6-3.8",
+        "verdict": "系统判定：绩点漂亮，开始适合被截图，但截图之后还要问实习。",
+        "proof": "系统把努力识别成字段，并立刻要求字段联动。",
+        "effects": {
+          "bench_score": 15,
+          "anxiety": 8,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 9,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "resume_keyword_density"
+        ]
+      },
+      {
+        "id": "gpa_38_plus",
+        "label": "3.8+",
+        "verdict": "系统判定：GPA 字段高亮。下一步请证明你不是只会维护字段。",
+        "proof": "系统先奖励你像表格，再追问你是不是只有表格。",
+        "effects": {
+          "bench_score": 20,
+          "anxiety": 7,
+          "selfhood": -3,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 10,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "contest_weight"
+        ]
       }
     ],
     "text_on_enter": "系统提示：大学版月考已更名为 GPA 字段维护。",
     "text_on_pass": "GPA 字段已维护。系统开始检查简历关键词密度。",
     "text_on_fail": "绩点字段波动。系统建议追加项目、竞赛或实习补丁。",
     "effects": {
-      "bench_score": 10,
-      "anxiety": 10,
-      "selfhood": -4,
-      "energy": -8,
-      "curiosity": -4,
-      "parent_pressure": 3,
-      "peer_comparison": 9,
-      "escape_index": -2,
-      "absurdity": 7
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 5
+    "absurdity": 1
   },
   {
     "id": "contest_weight",
     "title": "竞赛权重白名单",
     "stage": "大学",
-    "scenario": "你提交竞赛经历，系统先查白名单，再决定这段努力是不是容易被机器相信。",
-    "measurement": "权重范围 0-100；白名单命中越高，经历越容易被机器读懂，但不代表经历本身更有价值。",
+    "scenario": "你提交竞赛经历，系统先查白名单，再决定这段努力是否容易被机器相信。",
+    "measurement": "选择竞赛在系统眼里的识别度。这里讽刺白名单，不评价真实经历。",
+    "input": {
+      "type": "select",
+      "prompt": "你的竞赛经历命中哪种权重？",
+      "placeholder": "",
+      "help": "选择系统读到的权重，不代表经历真实价值。"
+    },
     "questions": [
       "比赛名称是否命中高权重白名单？",
       "非白名单经历是否会被系统低估？",
-      "热爱是否只有在获奖后才算数？"
+      "热爱是否只有获奖后才算数？"
     ],
     "unlocks": [
-      "resume_keyword_density"
+      "portfolio_packaging"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "contest_to_resume",
-        "label": "把奖项名称塞进关键词区",
-        "scene": "你把比赛名、名次和缩写排到机器最容易读的位置。",
-        "description": "进入简历关键词密度；可检索性上升，表达空间变窄。",
+        "id": "contest_gold",
+        "label": "高权重奖项",
+        "verdict": "系统判定：奖项名称可直接进入加分字段。",
+        "proof": "系统暂时不问过程，因为奖项缩写已经替你说话。",
         "effects": {
-          "bench_score": 5,
-          "anxiety": 4,
-          "selfhood": -3,
+          "bench_score": 15,
+          "anxiety": 6,
+          "selfhood": 0,
           "energy": 0,
           "curiosity": 0,
           "parent_pressure": 0,
-          "peer_comparison": 4,
+          "peer_comparison": 10,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
           "resume_keyword_density"
-        ],
-        "result_text": "竞赛被压缩成关键词。系统终于能搜索到你。"
+        ]
       },
       {
-        "id": "contest_to_portfolio",
-        "label": "讲清楚比赛里真正做了什么",
-        "scene": "你没有只写奖项，而是解释过程、失败和具体贡献。",
-        "description": "进入项目包装；好奇心和自我感上升，但系统要求你继续压缩。",
+        "id": "contest_named",
+        "label": "普通奖项/校级奖",
+        "verdict": "系统判定：可以写，但需要解释它为什么不是凑数。",
+        "proof": "系统要求你把经历翻译成结果、排名和影响范围。",
         "effects": {
-          "bench_score": 1,
-          "anxiety": 0,
-          "selfhood": 5,
+          "bench_score": 8,
+          "anxiety": 10,
+          "selfhood": 0,
           "energy": -3,
-          "curiosity": 6,
+          "curiosity": 0,
           "parent_pressure": 0,
           "peer_comparison": 0,
           "escape_index": 0,
@@ -573,32 +952,57 @@
         },
         "unlocks": [
           "portfolio_packaging"
-        ],
-        "result_text": "你讲了过程。系统把它标红：太像人话，请改成 bullet。"
+        ]
+      },
+      {
+        "id": "contest_none",
+        "label": "没有/不想参加",
+        "verdict": "系统判定：竞赛字段为空，正在寻找别的证明材料。",
+        "proof": "系统不是不能理解你没参赛，它只是不能把空白排序。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 10,
+          "selfhood": 2,
+          "energy": 0,
+          "curiosity": 4,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 3,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "portfolio_packaging"
+        ]
       }
     ],
     "text_on_enter": "系统正在识别竞赛名称。未命中白名单不代表经历无价值，只代表表格偷懒。",
     "text_on_pass": "竞赛权重审计完成。系统决定继续检查简历是否适配机器阅读。",
     "text_on_fail": "该竞赛暂未进入默认权重表。系统将其归档为：需要额外解释的热爱。",
     "effects": {
-      "bench_score": 7,
-      "anxiety": 9,
-      "selfhood": -2,
-      "energy": -5,
-      "curiosity": 2,
-      "parent_pressure": 2,
-      "peer_comparison": 8,
-      "escape_index": 1,
-      "absurdity": 10
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 8
+    "absurdity": 1
   },
   {
     "id": "portfolio_packaging",
     "title": "项目包装 Benchmark",
     "stage": "大学",
     "scenario": "你把做过的事整理成项目，系统要求过程变成果、探索变影响力、犹豫变三行 bullet。",
-    "measurement": "包装度表示“能不能被三行 bullet 讲完”；越高越利于展示，越不代表完整过程。",
+    "measurement": "选择项目包装成熟度。越能展示，不代表越完整，只代表更适合被快速扫描。",
+    "input": {
+      "type": "select",
+      "prompt": "你的项目能被包装到什么程度？",
+      "placeholder": "",
+      "help": "选择项目在系统眼中的展示形态。"
+    },
     "questions": [
       "项目是否能写成影响力？",
       "过程是否能压缩成三行 bullet？",
@@ -607,15 +1011,15 @@
     "unlocks": [
       "resume_keyword_density"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "portfolio_to_resume",
-        "label": "把项目压成三行 bullet",
-        "scene": "你把一个月的混乱探索压缩成“负责、提升、沉淀”。",
-        "description": "进入简历关键词密度；展示性上升，过程损耗上升。",
+        "id": "portfolio_metric",
+        "label": "有指标、有链接、有结果",
+        "verdict": "系统判定：项目已具备机器可读性，过程可以暂时被忽略。",
+        "proof": "系统看见数字和链接就安心，仿佛体验、失败和学习都不占内存。",
         "effects": {
-          "bench_score": 5,
-          "anxiety": 3,
+          "bench_score": 14,
+          "anxiety": 6,
           "selfhood": -3,
           "energy": -4,
           "curiosity": 0,
@@ -626,20 +1030,39 @@
         },
         "unlocks": [
           "resume_keyword_density"
-        ],
-        "result_text": "项目成功变短。系统说：现在它终于像成果了。"
+        ]
       },
       {
-        "id": "portfolio_to_internship",
-        "label": "拿作品直接敲第一段实习门",
-        "scene": "你把作品当成证据，不再等待标准模板完全批准。",
-        "description": "进入第一段实习入口；逃逸指数略升，但不确定性也上升。",
+        "id": "portfolio_story",
+        "label": "有过程，但指标不强",
+        "verdict": "系统判定：像人做的事，不像表格要的事。",
+        "proof": "系统要求你把过程改写成增长、沉淀和赋能。",
         "effects": {
-          "bench_score": 2,
-          "anxiety": 4,
+          "bench_score": 7,
+          "anxiety": 10,
           "selfhood": 0,
           "energy": 0,
-          "curiosity": 5,
+          "curiosity": 4,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 5
+        },
+        "unlocks": [
+          "resume_keyword_density"
+        ]
+      },
+      {
+        "id": "portfolio_none",
+        "label": "暂时没有像样项目",
+        "verdict": "系统判定：项目字段为空，正在生成补救建议。",
+        "proof": "系统不接受“还在探索”，它要求探索先变成可展示资产。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 12,
+          "selfhood": -2,
+          "energy": -3,
+          "curiosity": 0,
           "parent_pressure": 0,
           "peer_comparison": 0,
           "escape_index": 4,
@@ -647,32 +1070,37 @@
         },
         "unlocks": [
           "internship_gate"
-        ],
-        "result_text": "作品绕过了一部分模板。系统立刻生成新的入口门槛。"
+        ]
       }
     ],
-    "text_on_enter": "系统要求提交项目材料。技术、设计、运营、研究都将被压缩成成果字段。",
+    "text_on_enter": "系统要求提交项目材料。所有探索都将被压缩成成果字段。",
     "text_on_pass": "项目包装完成。系统提醒：可展示性不等于全部价值。",
     "text_on_fail": "项目叙事过于像人，系统正在尝试改写为指标。",
     "effects": {
-      "bench_score": 8,
-      "anxiety": 7,
-      "selfhood": -2,
-      "energy": -5,
-      "curiosity": 3,
-      "parent_pressure": 2,
-      "peer_comparison": 5,
-      "escape_index": 2,
-      "absurdity": 8
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 6
+    "absurdity": 1
   },
   {
     "id": "resume_keyword_density",
     "title": "简历关键词密度",
     "stage": "简历",
     "scenario": "简历进入机器阅读模式，你开始像搜索引擎一样描述自己。",
-    "measurement": "关键词密度 0-100；太低机器看不见，太高人类看不见。",
+    "measurement": "选择关键词密度。太低机器看不见，太高人类看不见。",
+    "input": {
+      "type": "select",
+      "prompt": "你的简历关键词密度像哪一档？",
+      "placeholder": "",
+      "help": "选择机器读到的密度。"
+    },
     "questions": [
       "简历是否能被 ATS 识别？",
       "关键词是否比经历本身更醒目？",
@@ -681,164 +1109,36 @@
     "unlocks": [
       "internship_gate"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "resume_to_internship",
-        "label": "让简历适配机器筛选",
-        "scene": "你调整动词、数字和关键词，直到简历像一份 API 请求。",
-        "description": "进入第一段实习入口；BenchScore 上升，自我感下降。",
+        "id": "resume_low",
+        "label": "人话很多，关键词偏少",
+        "verdict": "系统判定：读起来像人，但搜起来不像候选人。",
+        "proof": "系统建议你减少温度，增加动词、数字和黑话。",
         "effects": {
-          "bench_score": 6,
-          "anxiety": 5,
-          "selfhood": -4,
-          "energy": 0,
-          "curiosity": 0,
-          "parent_pressure": 0,
-          "peer_comparison": 4,
-          "escape_index": 0,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "internship_gate"
-        ],
-        "result_text": "简历通过机器阅读预检。系统开始请求经验字段。"
-      },
-      {
-        "id": "resume_human_version",
-        "label": "保留一版人类能读懂的简历",
-        "scene": "你删掉一部分空转黑话，让经历重新像经历。",
-        "description": "提前暴露逃逸路径；自我感上升，但可排序分下降。",
-        "effects": {
-          "bench_score": -5,
-          "anxiety": -2,
-          "selfhood": 8,
-          "energy": 0,
-          "curiosity": 4,
-          "parent_pressure": 0,
-          "peer_comparison": 0,
-          "escape_index": 7,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "life_not_workflow"
-        ],
-        "result_text": "你写了一版人能读懂的简历。系统称其为：格式风险。"
-      }
-    ],
-    "text_on_enter": "系统正在扫描简历关键词。人类语言将被转换为可检索短语。",
-    "text_on_pass": "关键词密度达标。系统开始寻找第一段实习记录。",
-    "text_on_fail": "简历可排序性不足。系统建议增加动词、数字和陌生缩写。",
-    "effects": {
-      "bench_score": 9,
-      "anxiety": 8,
-      "selfhood": -5,
-      "energy": -6,
-      "curiosity": -3,
-      "parent_pressure": 3,
-      "peer_comparison": 8,
-      "escape_index": -2,
-      "absurdity": 9
-    },
-    "absurdity": 7
-  },
-  {
-    "id": "internship_gate",
-    "title": "第一段实习入口",
-    "stage": "实习",
-    "scenario": "第一段实习入口打开，系统提出经典递归：没有经验所以需要经验。",
-    "measurement": "入口概率不是现实预测；它讽刺“没有经验所以拿不到经验”的递归筛选。",
-    "questions": [
-      "是否已有实习？",
-      "没有实习如何获得实习？",
-      "系统是否意识到这是一个递归问题？"
-    ],
-    "unlocks": [
-      "internship_brand_rank"
-    ],
-    "branches": [
-      {
-        "id": "internship_brand_hunt",
-        "label": "优先寻找能被 Logo 识别的实习",
-        "scene": "你开始把岗位描述前面的公司名放大，再放大。",
-        "description": "进入实习厂牌排名；同辈比较和焦虑上升。",
-        "effects": {
-          "bench_score": 6,
-          "anxiety": 6,
-          "selfhood": 0,
-          "energy": -4,
-          "curiosity": 0,
-          "parent_pressure": 0,
-          "peer_comparison": 7,
-          "escape_index": 0,
-          "absurdity": 0
-        },
-        "unlocks": [
-          "internship_brand_rank"
-        ],
-        "result_text": "第一段实习变成 Logo 搜索任务。系统很满意。"
-      },
-      {
-        "id": "internship_small_team",
-        "label": "先去能真正做事的小团队",
-        "scene": "Logo 不够响，但你可能真的能碰到问题。",
-        "description": "进入实习核心度鉴定；好奇心上升，可排序分上升较慢。",
-        "effects": {
-          "bench_score": 1,
-          "anxiety": 0,
+          "bench_score": -2,
+          "anxiety": 9,
           "selfhood": 4,
           "energy": 0,
-          "curiosity": 7,
+          "curiosity": 0,
           "parent_pressure": 0,
           "peer_comparison": 0,
           "escape_index": 3,
           "absurdity": 0
         },
         "unlocks": [
-          "internship_core_task"
-        ],
-        "result_text": "你选择先做事。系统追问：这段经历能不能被别人立刻认出来？"
-      }
-    ],
-    "text_on_enter": "系统检测到实习字段为空。正在启动经典递归：没有经验，因此需要经验。",
-    "text_on_pass": "第一段实习字段已生成。系统没有祝贺，系统正在识别厂牌 tier。",
-    "text_on_fail": "实习入口受阻。系统继续请求可被雇佣的证据。",
-    "effects": {
-      "bench_score": 11,
-      "anxiety": 10,
-      "selfhood": -3,
-      "energy": -7,
-      "curiosity": -1,
-      "parent_pressure": 4,
-      "peer_comparison": 10,
-      "escape_index": -1,
-      "absurdity": 9
-    },
-    "absurdity": 7
-  },
-  {
-    "id": "internship_brand_rank",
-    "title": "实习厂牌排名",
-    "stage": "实习",
-    "scenario": "实习记录出现后，系统先读公司名，再考虑你到底做了什么。",
-    "measurement": "厂牌 tier 是抽象讽刺标签，不对应真实公司排名；系统只是过度迷信 Logo。",
-    "questions": [
-      "是否属于 BigFactory-S、SuperApp 厂或 Cloud 厂？",
-      "厂牌是否比具体做了什么更先被读取？",
-      "系统是否把公司名当作新的考试分数？"
-    ],
-    "unlocks": [
-      "internship_role_rank"
-    ],
-    "branches": [
+          "internship_gate"
+        ]
+      },
       {
-        "id": "brand_to_role_rank",
-        "label": "继续比较厂牌里的岗位序列",
-        "scene": "厂牌还不够，系统要求你说明坐在哪个序列的哪把椅子上。",
-        "description": "进入实习岗位排名；比较继续细化。",
+        "id": "resume_balanced",
+        "label": "关键词与经历均衡",
+        "verdict": "系统判定：可以进入下一轮机器阅读，暂未触发人类困惑。",
+        "proof": "系统找到足够多的词，也还没有完全失去句子。",
         "effects": {
-          "bench_score": 5,
-          "anxiety": 5,
-          "selfhood": -2,
+          "bench_score": 12,
+          "anxiety": 7,
+          "selfhood": 0,
           "energy": 0,
           "curiosity": 0,
           "parent_pressure": 0,
@@ -847,72 +1147,96 @@
           "absurdity": 0
         },
         "unlocks": [
-          "internship_role_rank"
-        ],
-        "result_text": "Logo 被读取完毕。系统开始读取岗位名。"
+          "internship_gate"
+        ]
       },
       {
-        "id": "brand_to_core_task",
-        "label": "反问自己到底做了什么",
-        "scene": "你把注意力从公司名挪回任务、反馈和产出。",
-        "description": "进入实习核心度鉴定；自我感和好奇心上升。",
+        "id": "resume_overfit",
+        "label": "关键词堆满，像投喂算法",
+        "verdict": "系统判定：机器很开心，人类读完有点累。",
+        "proof": "系统把你识别成高密度候选对象，同时降低自我叙事保真度。",
         "effects": {
-          "bench_score": -1,
-          "anxiety": 0,
-          "selfhood": 5,
+          "bench_score": 16,
+          "anxiety": 9,
+          "selfhood": -6,
           "energy": 0,
-          "curiosity": 6,
+          "curiosity": 0,
           "parent_pressure": 0,
           "peer_comparison": 0,
-          "escape_index": 2,
-          "absurdity": 0
+          "escape_index": 0,
+          "absurdity": 6
         },
         "unlocks": [
-          "internship_core_task"
-        ],
-        "result_text": "你把 Logo 缩小了一点。系统开始检查核心度。"
+          "internship_gate"
+        ]
       }
     ],
-    "text_on_enter": "系统检测到实习记录。正在识别厂牌：BAT-like、SuperApp、Cloud、LocalLife 等抽象标签。",
-    "text_on_pass": "实习厂牌字段已生成。系统继续检查岗位排名。",
-    "text_on_fail": "厂牌字段不够醒目。系统建议用更多上下文解释实际贡献。",
+    "text_on_enter": "系统正在扫描简历关键词。人类语言将被转换为可检索短语。",
+    "text_on_pass": "关键词密度达标。系统开始寻找第一段实习记录。",
+    "text_on_fail": "简历可排序性不足。系统建议增加动词、数字和陌生缩写。",
     "effects": {
-      "bench_score": 12,
-      "anxiety": 10,
-      "selfhood": -4,
-      "energy": -7,
-      "curiosity": -2,
-      "parent_pressure": 4,
-      "peer_comparison": 12,
-      "escape_index": -2,
-      "absurdity": 10
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 8
+    "absurdity": 1
   },
   {
-    "id": "internship_role_rank",
-    "title": "实习岗位排名",
+    "id": "internship_gate",
+    "title": "第一段实习入口",
     "stage": "实习",
-    "scenario": "岗位名称被摆上横向榜单，复杂工作被压成“哪个序列更靠前”。",
-    "measurement": "岗位 ranking 不评价职业高低；它讽刺把不同劳动硬塞进同一张横向表。",
+    "scenario": "第一段实习入口打开，系统提出经典递归：没有经验，所以需要经验。",
+    "measurement": "选择当前实习状态。这里讽刺经验门槛，不评价个人能力。",
+    "input": {
+      "type": "select",
+      "prompt": "你现在的实习状态是什么？",
+      "placeholder": "",
+      "help": "选择一个状态，系统会继续索要厂牌或核心度。"
+    },
     "questions": [
-      "岗位是否能被排序成技术、产品、运营、设计、数据、商业化或测试？",
-      "非技术岗位是否也会被强行技术化解释？",
-      "岗位名称是否比工作内容更早被比较？"
+      "是否已有实习？",
+      "没有实习如何获得实习？",
+      "系统是否意识到这是递归问题？"
     ],
     "unlocks": [
-      "internship_core_task"
+      "internship_brand_rank"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "role_to_core_task",
-        "label": "证明岗位不是只有 title",
-        "scene": "你试图讲清楚实际任务，而不是让岗位名替你发言。",
-        "description": "进入实习核心度鉴定；可解释性上升。",
+        "id": "internship_none",
+        "label": "没有实习",
+        "verdict": "系统判定：经验字段为空，但入口仍要求经验。",
+        "proof": "系统发现递归，却把递归当成筛选效率。",
         "effects": {
-          "bench_score": 3,
-          "anxiety": 3,
-          "selfhood": 2,
+          "bench_score": 0,
+          "anxiety": 14,
+          "selfhood": -3,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 7,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 8
+        },
+        "unlocks": [
+          "portfolio_packaging"
+        ]
+      },
+      {
+        "id": "internship_small",
+        "label": "小团队/普通实习",
+        "verdict": "系统判定：经验字段存在，但 Logo 识别度不足。",
+        "proof": "系统暂时承认你做过事，然后马上追问在哪做。",
+        "effects": {
+          "bench_score": 7,
+          "anxiety": 9,
+          "selfhood": 0,
           "energy": 0,
           "curiosity": 4,
           "parent_pressure": 0,
@@ -922,53 +1246,393 @@
         },
         "unlocks": [
           "internship_core_task"
-        ],
-        "result_text": "岗位名后面终于出现了工作内容。系统要求继续量化。"
+        ]
       },
       {
-        "id": "role_to_factory_gate",
-        "label": "把岗位名当作大厂入场券",
-        "scene": "你把 title 调整到最适合下一轮筛选的形状。",
-        "description": "进入 BigFactory 入口；BenchScore 和焦虑上升。",
+        "id": "internship_big",
+        "label": "知名厂/平台实习",
+        "verdict": "系统判定：实习字段可高亮，正在读取厂牌 tier。",
+        "proof": "系统先读公司名，再考虑你到底做了什么。",
         "effects": {
-          "bench_score": 6,
-          "anxiety": 6,
-          "selfhood": 0,
-          "energy": -4,
+          "bench_score": 15,
+          "anxiety": 8,
+          "selfhood": -3,
+          "energy": 0,
           "curiosity": 0,
           "parent_pressure": 0,
-          "peer_comparison": 5,
+          "peer_comparison": 12,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
-          "big_factory_gate"
-        ],
-        "result_text": "岗位名被改写成入场券。系统打开下一道门。"
+          "internship_brand_rank"
+        ]
       }
     ],
-    "text_on_enter": "系统开始读取岗位名称。技术岗和非技术岗都将进入同一个比较面板。",
+    "text_on_enter": "系统检测到实习字段为空或待确认。正在启动经典递归。",
+    "text_on_pass": "第一段实习字段已生成。系统没有祝贺，系统正在识别厂牌 tier。",
+    "text_on_fail": "实习入口受阻。系统继续请求可被雇佣的证据。",
+    "effects": {
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
+    },
+    "absurdity": 1
+  },
+  {
+    "id": "internship_brand_rank",
+    "title": "实习厂牌排名",
+    "stage": "实习",
+    "scenario": "实习记录出现后，系统先读公司名，再考虑你做过什么。",
+    "measurement": "选择抽象厂牌档位。这里讽刺 Logo 崇拜，不评价真实公司。",
+    "input": {
+      "type": "select",
+      "prompt": "你的实习厂牌在系统里属于哪一档？",
+      "placeholder": "",
+      "help": "选择抽象档位，不填写真实公司名。"
+    },
+    "questions": [
+      "厂牌是否比具体贡献更先被读取？",
+      "公司名是否成了新的考试分数？",
+      "系统是否准备继续问岗位？"
+    ],
+    "unlocks": [
+      "internship_role_rank"
+    ],
+    "options": [
+      {
+        "id": "brand_s_tier",
+        "label": "S-tier 抽象大厂",
+        "verdict": "系统判定：Logo 字段强烈发光，具体工作暂时可以晚点再说。",
+        "proof": "系统把厂牌当成新的分数，并自动提高同辈比较浓度。",
+        "effects": {
+          "bench_score": 20,
+          "anxiety": 8,
+          "selfhood": -4,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 15,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_role_rank"
+        ]
+      },
+      {
+        "id": "brand_bigfactory",
+        "label": "BigFactory-like",
+        "verdict": "系统判定：厂牌足够进入下一张表，但还要看岗位序列。",
+        "proof": "系统不会因为你进门就停，它还要知道你坐在哪个格子。",
+        "effects": {
+          "bench_score": 15,
+          "anxiety": 9,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 12,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_role_rank"
+        ]
+      },
+      {
+        "id": "brand_mid",
+        "label": "中厂",
+        "verdict": "系统判定：厂牌可解释，但需要用核心任务补光。",
+        "proof": "系统要求你证明自己不是只在边缘字段里路过。",
+        "effects": {
+          "bench_score": 9,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": -3,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "brand_startup",
+        "label": "创业团队",
+        "verdict": "系统判定：Logo 识别度不足，但故事性过强。",
+        "proof": "系统不讨厌创业，它只是很难把混乱成长放进标准格。",
+        "effects": {
+          "bench_score": 5,
+          "anxiety": 11,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 6,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 4,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "brand_none",
+        "label": "无实习",
+        "verdict": "系统判定：厂牌字段为空，正在把空白转写成风险。",
+        "proof": "系统无法识别“尚未开始”，只识别“缺少字段”。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 14,
+          "selfhood": -4,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 8,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "resume_keyword_density"
+        ]
+      }
+    ],
+    "text_on_enter": "系统检测到实习记录。正在识别抽象厂牌标签。",
+    "text_on_pass": "实习厂牌字段已生成。系统继续检查岗位排名。",
+    "text_on_fail": "厂牌字段不够醒目。系统建议用更多上下文解释实际贡献。",
+    "effects": {
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
+    },
+    "absurdity": 1
+  },
+  {
+    "id": "internship_role_rank",
+    "title": "实习岗位排名",
+    "stage": "实习",
+    "scenario": "岗位名称被摆上横向榜单，复杂工作被压成“哪个序列更靠前”。",
+    "measurement": "选择岗位类别。这里不评价职业高低，只讽刺把不同劳动硬塞进同一张榜。",
+    "input": {
+      "type": "select",
+      "prompt": "你的实习岗位被系统归到哪一类？",
+      "placeholder": "",
+      "help": "选择岗位标签，系统会开始横向排序。"
+    },
+    "questions": [
+      "岗位名称是否比工作内容更早被比较？",
+      "非技术岗位是否也会被强行技术化解释？",
+      "系统能否理解不同劳动的差异？"
+    ],
+    "unlocks": [
+      "internship_core_task"
+    ],
+    "options": [
+      {
+        "id": "role_algo",
+        "label": "算法",
+        "verdict": "系统判定：算法字段自带光环，开始自动索要论文、竞赛和算力证明。",
+        "proof": "系统认为“算法”两个字足够贵，但仍要继续比较组别核心度。",
+        "effects": {
+          "bench_score": 18,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 13,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "role_backend",
+        "label": "后端",
+        "verdict": "系统判定：后端字段稳定可读，适合被包装成规模和可靠性。",
+        "proof": "系统喜欢稳定，但更喜欢你把稳定量化成 QPS。",
+        "effects": {
+          "bench_score": 14,
+          "anxiety": 8,
+          "selfhood": 0,
+          "energy": -3,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "role_product",
+        "label": "产品",
+        "verdict": "系统判定：产品字段需要补充“影响力”和“闭环”。",
+        "proof": "系统暂时看不见沟通成本，只看得见指标归因。",
+        "effects": {
+          "bench_score": 10,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 5
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "role_ops",
+        "label": "运营",
+        "verdict": "系统判定：运营字段被要求证明自己不是打杂。",
+        "proof": "系统把复杂执行压成增长曲线，曲线不够就继续追问。",
+        "effects": {
+          "bench_score": 8,
+          "anxiety": 12,
+          "selfhood": -3,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "role_design",
+        "label": "设计",
+        "verdict": "系统判定：设计字段需要被翻译成转化率，否则系统假装看不见审美。",
+        "proof": "系统喜欢界面好看，但更喜欢好看能进表。",
+        "effects": {
+          "bench_score": 8,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 5,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "role_data",
+        "label": "数据",
+        "verdict": "系统判定：数据字段可被读取，但你本人也正在被读取。",
+        "proof": "系统欣赏你做表，同时把你做成表。",
+        "effects": {
+          "bench_score": 13,
+          "anxiety": 9,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 0,
+          "absurdity": 6
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "role_test",
+        "label": "测试",
+        "verdict": "系统判定：测试字段被低估风险较高，请提交更多系统性证据。",
+        "proof": "系统依赖质量，却经常忘记质量是谁兜住的。",
+        "effects": {
+          "bench_score": 7,
+          "anxiety": 11,
+          "selfhood": -2,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 3,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      },
+      {
+        "id": "role_other",
+        "label": "其他",
+        "verdict": "系统判定：岗位不在默认表里，正在请求人工解释。",
+        "proof": "系统不是不能理解你，它只是懒得扩展下拉框。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 5,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 5,
+          "absurdity": 7
+        },
+        "unlocks": [
+          "internship_core_task"
+        ]
+      }
+    ],
+    "text_on_enter": "系统开始读取岗位名称。所有岗位都将进入同一张比较面板。",
     "text_on_pass": "岗位排名字段已生成。系统继续判断你是否接触了核心任务。",
     "text_on_fail": "岗位无法稳定排序。系统决定增加核心度鉴定。",
     "effects": {
-      "bench_score": 9,
-      "anxiety": 9,
-      "selfhood": -3,
-      "energy": -6,
-      "curiosity": 1,
-      "parent_pressure": 3,
-      "peer_comparison": 9,
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
       "escape_index": 0,
-      "absurdity": 10
+      "absurdity": 0
     },
-    "absurdity": 8
+    "absurdity": 1
   },
   {
     "id": "internship_core_task",
     "title": "实习核心度鉴定",
     "stage": "实习",
     "scenario": "你终于开始做事，系统仍然追问：是不是核心组、核心项目、核心指标。",
-    "measurement": "核心度表示“是否容易写进简历指标”；不是对真实贡献的判断。",
+    "measurement": "选择核心度。这里讽刺“核心”崇拜，不评价真实贡献。",
+    "input": {
+      "type": "select",
+      "prompt": "你接触到的任务核心度如何？",
+      "placeholder": "",
+      "help": "选择系统眼中的核心度。"
+    },
     "questions": [
       "是否在核心组？",
       "是否接触核心项目？",
@@ -977,16 +1641,36 @@
     "unlocks": [
       "big_factory_gate"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "core_to_factory",
-        "label": "把核心任务翻译成大厂语言",
-        "scene": "你把具体贡献改写成增长、稳定性、规模和效率。",
-        "description": "进入 BigFactory 入口；系统更容易读懂你。",
+        "id": "core_high",
+        "label": "核心项目/核心指标",
+        "verdict": "系统判定：核心度可高亮，开始加载 BigFactory 入口。",
+        "proof": "系统把“核心”识别成简历硬通货，并要求你把贡献继续量化。",
         "effects": {
-          "bench_score": 6,
-          "anxiety": 4,
-          "selfhood": -2,
+          "bench_score": 16,
+          "anxiety": 9,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 10,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "big_factory_gate"
+        ]
+      },
+      {
+        "id": "core_mid",
+        "label": "参与一部分核心流程",
+        "verdict": "系统判定：核心度可解释，但需要更多动词和数字。",
+        "proof": "系统建议你把参与改写成负责，把协作改写成推动。",
+        "effects": {
+          "bench_score": 10,
+          "anxiety": 10,
+          "selfhood": 0,
           "energy": -4,
           "curiosity": 0,
           "parent_pressure": 0,
@@ -996,53 +1680,57 @@
         },
         "unlocks": [
           "big_factory_gate"
-        ],
-        "result_text": "核心任务已完成企业话术适配。系统加载 BigFactory。"
+        ]
       },
       {
-        "id": "core_to_position",
-        "label": "直接追问工作本身的意义",
-        "scene": "你没有先问厂牌，而是问这个任务训练了什么能力。",
-        "description": "进入岗位档次 Benchmark；好奇心保留，但系统仍会排序。",
+        "id": "core_low",
+        "label": "边缘任务/杂活较多",
+        "verdict": "系统判定：核心度不足，正在请求包装层。",
+        "proof": "系统无法理解实习的学习曲线，只想知道你有没有拿到可炫耀字段。",
         "effects": {
-          "bench_score": 1,
-          "anxiety": 0,
-          "selfhood": 4,
+          "bench_score": 0,
+          "anxiety": 12,
+          "selfhood": -3,
           "energy": 0,
-          "curiosity": 7,
+          "curiosity": 3,
           "parent_pressure": 0,
           "peer_comparison": 0,
           "escape_index": 3,
           "absurdity": 0
         },
         "unlocks": [
-          "position_tier"
-        ],
-        "result_text": "你试图绕开厂牌崇拜。系统换了个字段继续追。"
+          "big_factory_gate"
+        ]
       }
     ],
     "text_on_enter": "系统提示：有实习并不够，还要判断核心度。",
     "text_on_pass": "核心度鉴定完成。系统开始加载 BigFactory 入口。",
     "text_on_fail": "系统无法确认核心度。正在寻找更多能证明你不是边缘字段的材料。",
     "effects": {
-      "bench_score": 10,
-      "anxiety": 10,
-      "selfhood": -4,
-      "energy": -7,
-      "curiosity": -2,
-      "parent_pressure": 4,
-      "peer_comparison": 10,
-      "escape_index": -2,
-      "absurdity": 10
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 8
+    "absurdity": 1
   },
   {
     "id": "big_factory_gate",
     "title": "BigFactory 入口",
     "stage": "大厂",
     "scenario": "BigFactory 入口出现。系统假装这是终点，下一秒又生成更贵的比较面板。",
-    "measurement": "BigFactory 是虚构抽象，不是现实公司评价；进入只会解锁更多指标。",
+    "measurement": "选择抽象大厂入口状态。BigFactory 是虚构标签，不评价真实公司。",
+    "input": {
+      "type": "select",
+      "prompt": "你是否进入 BigFactory-like 路线？",
+      "placeholder": "",
+      "help": "选择抽象状态，系统会继续比较岗位与风险。"
+    },
     "questions": [
       "是否进入 BigFactory？",
       "进入之后是否属于更靠前的岗位序列？",
@@ -1051,146 +1739,194 @@
     "unlocks": [
       "position_tier"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "factory_enter",
-        "label": "进入 BigFactory 并接受新面板",
-        "scene": "你以为进入就是终点，系统递来岗位层级、转正率和风险巡检。",
-        "description": "进入大厂岗位档次 Benchmark；BenchScore 上升，自我感下降。",
+        "id": "factory_yes",
+        "label": "已进入",
+        "verdict": "系统判定：BigFactory 字段点亮。恭喜，下一轮比较开始。",
+        "proof": "系统把“进入”当成新起点，立刻加载岗位层级、转正率和裁员风险。",
         "effects": {
-          "bench_score": 7,
-          "anxiety": 6,
-          "selfhood": -4,
+          "bench_score": 20,
+          "anxiety": 10,
+          "selfhood": -5,
           "energy": 0,
           "curiosity": 0,
           "parent_pressure": 0,
-          "peer_comparison": 6,
+          "peer_comparison": 14,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
           "position_tier"
-        ],
-        "result_text": "BigFactory 字段点亮。系统宣布：恭喜，下一轮开始。"
+        ]
       },
       {
-        "id": "factory_keep_distance",
-        "label": "不把厂牌当作人格证明",
-        "scene": "你承认这是一段经历，但不允许 Logo 解释全部的你。",
-        "description": "进入裁员风险巡检；逃逸指数上升，系统仍会制造风险。",
+        "id": "factory_interview",
+        "label": "面试中/待定",
+        "verdict": "系统判定：状态悬浮，焦虑最适合后台常驻。",
+        "proof": "系统发现不确定性，并把不确定性做成每天刷新的 dashboard。",
         "effects": {
-          "bench_score": -2,
-          "anxiety": 3,
-          "selfhood": 8,
-          "energy": 0,
+          "bench_score": 8,
+          "anxiety": 15,
+          "selfhood": 0,
+          "energy": -5,
           "curiosity": 0,
           "parent_pressure": 0,
-          "peer_comparison": 0,
-          "escape_index": 6,
+          "peer_comparison": 8,
+          "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
-          "layoff_risk_check"
-        ],
-        "result_text": "你和厂牌保持距离。系统改用风险面板继续解释你。"
+          "position_tier"
+        ]
+      },
+      {
+        "id": "factory_no",
+        "label": "没有进入",
+        "verdict": "系统判定：BigFactory 字段未点亮，系统开始寻找替代证明。",
+        "proof": "系统不是没有别的语言，只是最爱用厂牌偷懒。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 12,
+          "selfhood": -2,
+          "energy": 0,
+          "curiosity": 3,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 5,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "position_tier"
+        ]
       }
     ],
     "text_on_enter": "系统检测到 BigFactory 入口。注意：这不是现实公司评价，只是讽刺厂牌崇拜。",
-    "text_on_pass": "你进入了 BigFactory。系统没有结束，而是生成了岗位档次 Benchmark。",
+    "text_on_pass": "你进入或路过了 BigFactory 比较器。系统没有结束，而是生成岗位档次 Benchmark。",
     "text_on_fail": "BigFactory 字段暂未确认。系统继续维持比较面板。",
     "effects": {
-      "bench_score": 14,
-      "anxiety": 12,
-      "selfhood": -5,
-      "energy": -8,
-      "curiosity": -2,
-      "parent_pressure": -2,
-      "peer_comparison": 12,
-      "escape_index": -2,
-      "absurdity": 11
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 9
+    "absurdity": 1
   },
   {
     "id": "position_tier",
     "title": "大厂岗位档次 Benchmark",
     "stage": "大厂",
     "scenario": "进入组织后，系统开始给岗位序列排序，仿佛 title 能解释工作内容和人生质量。",
-    "measurement": "岗位档次是系统臆造字段；范围 0-100，越高越容易被 dashboard 展示。",
+    "measurement": "选择岗位档次感。这里讽刺岗位横向 ranking，不评价职业高低。",
+    "input": {
+      "type": "select",
+      "prompt": "系统把你的岗位档次感归到哪一栏？",
+      "placeholder": "",
+      "help": "选择岗位序列感，系统会继续生成风险。"
+    },
     "questions": [
-      "是算法、后端、客户端、产品、运营、设计、数据、销售还是测试？",
       "岗位是否能被压成横向 ranking？",
-      "你做什么是否比你是谁更容易被读取？"
+      "你做什么是否比你是谁更容易被读取？",
+      "系统能否分清 title 和工作内容？"
     ],
     "unlocks": [
       "layoff_risk_check"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "position_rank_up",
-        "label": "继续优化岗位层级叙事",
-        "scene": "你把工作内容改写成更靠前、更稀缺、更能被比较的序列。",
-        "description": "进入裁员风险巡检；排序分上升，风险焦虑上升。",
+        "id": "position_front",
+        "label": "高光序列",
+        "verdict": "系统判定：岗位序列可展示，但展示之后风险也会更精细。",
+        "proof": "系统把高光岗位做成新靶心，并要求你证明不会掉队。",
         "effects": {
-          "bench_score": 5,
-          "anxiety": 6,
+          "bench_score": 18,
+          "anxiety": 11,
           "selfhood": 0,
-          "energy": -4,
+          "energy": 0,
           "curiosity": 0,
           "parent_pressure": 0,
-          "peer_comparison": 5,
+          "peer_comparison": 13,
           "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
           "layoff_risk_check"
-        ],
-        "result_text": "岗位层级叙事完成。系统马上问：这个层级稳不稳？"
+        ]
       },
       {
-        "id": "position_skill_map",
-        "label": "把岗位还原成能力地图",
-        "scene": "你把 title 拆回具体技能、协作和学习方向。",
-        "description": "进入 AI 替代性审计；好奇心上升，系统转向变化焦虑。",
+        "id": "position_normal",
+        "label": "普通业务序列",
+        "verdict": "系统判定：岗位稳定可读，但不够神话。",
+        "proof": "系统要求你用影响力、规模和 ownership 补齐光环。",
         "effects": {
-          "bench_score": -1,
-          "anxiety": 0,
-          "selfhood": 5,
-          "energy": 0,
-          "curiosity": 7,
+          "bench_score": 10,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": -4,
+          "curiosity": 0,
           "parent_pressure": 0,
           "peer_comparison": 0,
-          "escape_index": 4,
+          "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
-          "ai_replacement_audit"
-        ],
-        "result_text": "岗位被还原成能力。系统立刻检查哪些能力会被重写。"
+          "layoff_risk_check"
+        ]
+      },
+      {
+        "id": "position_unclear",
+        "label": "岗位边界模糊",
+        "verdict": "系统判定：边界不清，适合被塞进更多解释。",
+        "proof": "系统无法处理复杂工作，只能生成“复合型人才”标签暂存。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 12,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 5,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 5,
+          "absurdity": 7
+        },
+        "unlocks": [
+          "layoff_risk_check"
+        ]
       }
     ],
-    "text_on_enter": "系统正在给岗位排序。技术岗和非技术岗都被迫站在同一张表里。",
+    "text_on_enter": "系统正在给岗位排序。所有岗位都被迫站在同一张表里。",
     "text_on_pass": "岗位档次字段已生成。系统立即启动裁员风险巡检。",
     "text_on_fail": "岗位档次不够稳定。系统继续请求更多组织结构信息。",
     "effects": {
-      "bench_score": 10,
-      "anxiety": 11,
-      "selfhood": -4,
-      "energy": -7,
-      "curiosity": -2,
-      "parent_pressure": -1,
-      "peer_comparison": 11,
-      "escape_index": -1,
-      "absurdity": 11
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 9
+    "absurdity": 1
   },
   {
     "id": "layoff_risk_check",
     "title": "裁员风险巡检",
     "stage": "大厂",
     "scenario": "offer 到手后，安全感没有到手。系统把新闻、概率和命运混成风险面板。",
-    "measurement": "风险值不是预测，只是焦虑生产机；0 不等于安全，100 也不等于命运。",
+    "measurement": "选择系统感知到的风险档位。风险不是预测，只是焦虑生产机。",
+    "input": {
+      "type": "select",
+      "prompt": "你的裁员风险被系统刷成哪一档？",
+      "placeholder": "",
+      "help": "选择风险感，不代表现实预测。"
+    },
     "questions": [
       "offer 到手后，风险模型是否已经刷新？",
       "组织调整新闻是否会影响你的自我描述？",
@@ -1199,72 +1935,116 @@
     "unlocks": [
       "ai_replacement_audit"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "risk_refresh_dashboard",
-        "label": "反复刷新风险面板",
-        "scene": "你把新闻、传闻和组织架构都喂给焦虑模型。",
-        "description": "进入 AI 替代性审计；焦虑上升，能量下降。",
+        "id": "risk_high",
+        "label": "高风险",
+        "verdict": "系统判定：风险面板常驻，安全感被移出缓存。",
+        "proof": "系统把所有新闻都解释成与你有关，哪怕样本量只有一个标题。",
         "effects": {
           "bench_score": 0,
-          "anxiety": 8,
-          "selfhood": 0,
-          "energy": -6,
+          "anxiety": 18,
+          "selfhood": -3,
+          "energy": -8,
           "curiosity": 0,
           "parent_pressure": 0,
-          "peer_comparison": 4,
+          "peer_comparison": 0,
           "escape_index": 0,
-          "absurdity": 4
+          "absurdity": 8
         },
         "unlocks": [
           "ai_replacement_audit"
-        ],
-        "result_text": "风险面板刷新成功。安全感没有刷新出来。"
+        ]
       },
       {
-        "id": "risk_choose_life",
-        "label": "承认概率不是命运",
-        "scene": "你关掉一部分噪音，尝试把风险放回生活而不是放进人格。",
-        "description": "进入人生不是 Workflow；逃逸指数和自我感上升。",
+        "id": "risk_mid",
+        "label": "中风险",
+        "verdict": "系统判定：概率不够吓人，但足够每天刷新。",
+        "proof": "系统最喜欢中风险，因为它既不能行动，也不能安心。",
         "effects": {
           "bench_score": 0,
-          "anxiety": -6,
-          "selfhood": 10,
+          "anxiety": 13,
+          "selfhood": 0,
+          "energy": -5,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 6,
+          "escape_index": 0,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "ai_replacement_audit"
+        ]
+      },
+      {
+        "id": "risk_low",
+        "label": "低风险",
+        "verdict": "系统判定：风险较低，但不允许你完全放心。",
+        "proof": "系统保留最终解释权，并提示低风险也可能生成新风险。",
+        "effects": {
+          "bench_score": 4,
+          "anxiety": 7,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 2,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "ai_replacement_audit"
+        ]
+      },
+      {
+        "id": "risk_unknown",
+        "label": "无法判断但系统照样判断",
+        "verdict": "系统判定：信息不足，结论照出。",
+        "proof": "系统把不确定性本身当成指标，完成了一次漂亮的自我供给。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 12,
+          "selfhood": 0,
           "energy": 0,
           "curiosity": 4,
           "parent_pressure": 0,
           "peer_comparison": 0,
-          "escape_index": 12,
-          "absurdity": 0
+          "escape_index": 5,
+          "absurdity": 10
         },
         "unlocks": [
-          "life_not_workflow"
-        ],
-        "result_text": "你没有把概率当命运。系统记录：用户拒绝持续刷新。"
+          "ai_replacement_audit"
+        ]
       }
     ],
     "text_on_enter": "系统提示：岗位状态已确认，风险状态开始持续刷新。",
     "text_on_pass": "裁员风险巡检完成。系统没有给出安全感，只给出更多概率。",
     "text_on_fail": "风险无法归零。系统正在寻找下一个解释变量。",
     "effects": {
-      "bench_score": 4,
-      "anxiety": 14,
-      "selfhood": -3,
-      "energy": -7,
-      "curiosity": -1,
-      "parent_pressure": 2,
-      "peer_comparison": 7,
-      "escape_index": 3,
-      "absurdity": 12
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 10
+    "absurdity": 1
   },
   {
     "id": "ai_replacement_audit",
     "title": "AI 替代性审计",
     "stage": "大厂/AI",
-    "scenario": "你刚适配岗位，岗位定义开始移动。系统把变化解释成替代概率。",
-    "measurement": "替代概率不是职业建议；它讽刺把所有变化都解释成威胁的叙事。",
+    "scenario": "你刚适配岗位，岗位定义开始移动。系统把所有变化都解释成替代概率。",
+    "measurement": "选择 AI 替代性档位。它不是职业建议，只是讽刺把变化全翻译成威胁。",
+    "input": {
+      "type": "select",
+      "prompt": "系统把你的 AI 替代性刷成哪一档？",
+      "placeholder": "",
+      "help": "选择焦虑模型给出的档位。"
+    },
     "questions": [
       "该岗位是否会被 AI 改写？",
       "你优化完简历后，岗位定义是否已经移动？",
@@ -1273,132 +2053,174 @@
     "unlocks": [
       "life_not_workflow"
     ],
-    "branches": [
+    "options": [
       {
-        "id": "ai_chase_adaptation",
-        "label": "继续适配每一次岗位变形",
-        "scene": "你更新技能栈、关键词和作品集，像追逐一个移动靶。",
-        "description": "进入人生不是 Workflow；系统承认指标仍会继续长出来。",
+        "id": "ai_high",
+        "label": "高风险",
+        "verdict": "系统判定：替代性高，请把自己继续升级成下一个版本。",
+        "proof": "系统无法解释变化，于是把变化命名为风险。",
         "effects": {
-          "bench_score": 3,
-          "anxiety": 6,
+          "bench_score": 0,
+          "anxiety": 16,
           "selfhood": 0,
-          "energy": -5,
-          "curiosity": 3,
+          "energy": -7,
+          "curiosity": 4,
           "parent_pressure": 0,
           "peer_comparison": 0,
           "escape_index": 0,
-          "absurdity": 5
+          "absurdity": 9
         },
         "unlocks": [
           "life_not_workflow"
-        ],
-        "result_text": "你完成了一次适配。岗位定义又移动了一格。"
+        ]
       },
       {
-        "id": "ai_reframe_change",
-        "label": "把变化当成重新选择的机会",
-        "scene": "你不再只问会不会被替代，也问自己想和工具一起做什么。",
-        "description": "进入人生不是 Workflow；好奇心、自我感和逃逸指数上升。",
+        "id": "ai_mid",
+        "label": "中风险",
+        "verdict": "系统判定：你暂时不会消失，但需要持续证明还没过期。",
+        "proof": "系统把学习能力也做成了订阅制。",
         "effects": {
-          "bench_score": -3,
-          "anxiety": -4,
-          "selfhood": 10,
+          "bench_score": 0,
+          "anxiety": 12,
+          "selfhood": 0,
           "energy": 0,
-          "curiosity": 10,
+          "curiosity": 5,
           "parent_pressure": 0,
-          "peer_comparison": 0,
-          "escape_index": 12,
+          "peer_comparison": 5,
+          "escape_index": 0,
           "absurdity": 0
         },
         "unlocks": [
           "life_not_workflow"
-        ],
-        "result_text": "你把变化从威胁改写成问题。系统无法稳定分类。"
+        ]
+      },
+      {
+        "id": "ai_low",
+        "label": "低风险",
+        "verdict": "系统判定：替代性较低，但系统仍会建议你焦虑一下以示尊重。",
+        "proof": "低风险不适合传播，所以系统自动补充“但未来不好说”。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 7,
+          "selfhood": 3,
+          "energy": 0,
+          "curiosity": 0,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 4,
+          "absurdity": 0
+        },
+        "unlocks": [
+          "life_not_workflow"
+        ]
+      },
+      {
+        "id": "ai_unknown",
+        "label": "无法判断但系统照样判断",
+        "verdict": "系统判定：样本不足，结论充足。",
+        "proof": "系统把“我不知道”改写成“建议保持警惕”，显得很专业。",
+        "effects": {
+          "bench_score": 0,
+          "anxiety": 10,
+          "selfhood": 0,
+          "energy": 0,
+          "curiosity": 8,
+          "parent_pressure": 0,
+          "peer_comparison": 0,
+          "escape_index": 8,
+          "absurdity": 10
+        },
+        "unlocks": [
+          "life_not_workflow"
+        ]
       }
     ],
     "text_on_enter": "系统正在计算 AI 替代概率。注意：这是讽刺焦虑机制，不是职业建议。",
     "text_on_pass": "AI 替代性审计完成。系统承认：岗位会变，人也可以变。",
     "text_on_fail": "替代性无法确定。系统决定把不确定性也加入 dashboard。",
     "effects": {
-      "bench_score": 2,
-      "anxiety": 12,
-      "selfhood": -2,
-      "energy": -6,
-      "curiosity": 4,
-      "parent_pressure": 2,
-      "peer_comparison": 5,
-      "escape_index": 8,
-      "absurdity": 14
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 12
+    "absurdity": 1
   },
   {
     "id": "life_not_workflow",
     "title": "人生不是 Workflow",
     "stage": "逃逸",
     "scenario": "系统发现异常：你正在尝试不用字段解释自己。dashboard 开始失去权限。",
-    "measurement": "逃逸指数 0-100；越高越能用自己的语言描述自己，而不是等系统给字段。",
+    "measurement": "选择如何结束本局。逃逸不是胜利条件，只是暂时拿回叙事权。",
+    "input": {
+      "type": "select",
+      "prompt": "最后，你准备怎么处理这张表？",
+      "placeholder": "",
+      "help": "选择一个结束动作。"
+    },
     "questions": [
       "如果不再只用字段解释自己，会发生什么？",
       "未被系统收录的部分是否也真实存在？",
       "你是否愿意让 dashboard 暂停？"
     ],
     "unlocks": [],
-    "branches": [
+    "options": [
       {
-        "id": "life_pause_dashboard",
+        "id": "life_pause",
         "label": "暂停 dashboard",
-        "scene": "你允许自己暂时不回答“下一步优化什么”。",
-        "description": "结束本局；系统无法把暂停转换成失败。",
+        "verdict": "系统判定：用户拒绝继续提交字段。错误：该行为无法稳定归一化。",
+        "proof": "你没有通关人生，只是离开了这张表。",
         "effects": {
           "bench_score": 0,
-          "anxiety": -8,
-          "selfhood": 12,
-          "energy": 8,
+          "anxiety": -10,
+          "selfhood": 14,
+          "energy": 10,
           "curiosity": 0,
           "parent_pressure": 0,
           "peer_comparison": 0,
-          "escape_index": 10,
+          "escape_index": 16,
           "absurdity": 0
         },
-        "unlocks": [],
-        "result_text": "dashboard 暂停。你没有通关人生，你只是离开了这张表。"
+        "unlocks": []
       },
       {
-        "id": "life_describe_self",
+        "id": "life_self_language",
         "label": "用自己的语言描述自己",
-        "scene": "你不再等待系统给标签，而是重新写一句不像指标的话。",
-        "description": "结束本局；自我感和逃逸指数上升。",
+        "verdict": "系统判定：这句话不好排序，因此更像你。",
+        "proof": "系统短暂失去解释权，开始把沉默误判成异常。",
         "effects": {
-          "bench_score": -6,
-          "anxiety": 0,
-          "selfhood": 14,
+          "bench_score": 0,
+          "anxiety": -8,
+          "selfhood": 18,
           "energy": 0,
-          "curiosity": 8,
+          "curiosity": 10,
           "parent_pressure": 0,
           "peer_comparison": 0,
-          "escape_index": 12,
+          "escape_index": 18,
           "absurdity": 0
         },
-        "unlocks": [],
-        "result_text": "你写下了一句系统不好排序的话。它因此更像你。"
+        "unlocks": []
       }
     ],
     "text_on_enter": "系统发现异常路径：玩家正在尝试离开指标流水线。",
     "text_on_pass": "系统报错：无法用单一指标解释该玩家。恭喜，你终于不是一个字段了。",
     "text_on_fail": "系统试图继续解释你，但解释器开始过热。",
     "effects": {
-      "bench_score": -8,
-      "anxiety": -10,
-      "selfhood": 18,
-      "energy": 8,
-      "curiosity": 12,
-      "parent_pressure": 5,
-      "peer_comparison": -8,
-      "escape_index": 20,
-      "absurdity": 15
+      "bench_score": 0,
+      "anxiety": 0,
+      "selfhood": 0,
+      "energy": 0,
+      "curiosity": 0,
+      "parent_pressure": 0,
+      "peer_comparison": 0,
+      "escape_index": 0,
+      "absurdity": 0
     },
-    "absurdity": 10
+    "absurdity": 3
   }
 ]

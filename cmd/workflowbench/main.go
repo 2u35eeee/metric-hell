@@ -33,14 +33,6 @@ func main() {
 	}
 
 	engine := game.NewEngine(nodes)
-	actions := []game.Action{
-		game.ActionOptimizeMetric,
-		game.ActionComparePeers,
-		game.ActionRest,
-		game.ActionSwitchTrack,
-		game.ActionJobTrack,
-		game.ActionRefuseMetric,
-	}
 
 	fmt.Println("WorkflowBench CLI")
 	fmt.Println()
@@ -51,16 +43,17 @@ func main() {
 		if result.CurrentNode == nil {
 			break
 		}
-		action := actions[turn%len(actions)]
 		fmt.Printf("Turn %d: %s\n", result.State.Turn+1, result.CurrentNode.Title)
-		fmt.Printf("Action: %s\n", game.ActionLabel(action))
-		next, err := engine.Step(result.State, action)
+		submission := defaultSubmission(*result.CurrentNode)
+		fmt.Printf("提交字段: %s\n", submissionLabel(*result.CurrentNode, submission))
+		next, err := engine.StepSubmission(result.State, submission)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "step failed: %v\n", err)
 			os.Exit(1)
 		}
-		if len(next.State.EventLog) > 0 {
-			fmt.Printf("系统提示：%s\n", next.State.EventLog[len(next.State.EventLog)-1])
+		if next.AuditRecord != nil {
+			fmt.Printf("系统判词：%s\n", next.AuditRecord.Verdict)
+			fmt.Printf("证明材料：%s\n", next.AuditRecord.Proof)
 		}
 		fmt.Printf("BenchScore: %d  Anxiety: %d  Selfhood: %d  Energy: %d  EscapeIndex: %d\n",
 			next.State.BenchScore, next.State.Anxiety, next.State.Selfhood, next.State.Energy, next.State.EscapeIndex)
@@ -84,4 +77,38 @@ func printInitial(state game.State) {
 	fmt.Printf("Selfhood: %d\n", state.Selfhood)
 	fmt.Printf("Energy: %d\n", state.Energy)
 	fmt.Println()
+}
+
+func defaultSubmission(node game.Node) game.Submission {
+	submission := game.Submission{NodeID: node.ID}
+	if len(node.Options) == 0 {
+		return submission
+	}
+	first := node.Options[0]
+	if node.Input.Type == game.InputTypeNumber {
+		switch {
+		case first.Min != nil:
+			submission.NumericValue = first.Min
+		case first.Max != nil:
+			submission.NumericValue = first.Max
+		default:
+			value := 0.0
+			submission.NumericValue = &value
+		}
+		return submission
+	}
+	submission.OptionID = first.ID
+	return submission
+}
+
+func submissionLabel(node game.Node, submission game.Submission) string {
+	if submission.NumericValue != nil {
+		return fmt.Sprintf("%g", *submission.NumericValue)
+	}
+	for _, option := range node.Options {
+		if option.ID == submission.OptionID {
+			return option.Label
+		}
+	}
+	return "默认字段"
 }

@@ -3,6 +3,7 @@ package game
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 type Engine struct {
@@ -11,11 +12,17 @@ type Engine struct {
 }
 
 type Result struct {
-	State       State          `json:"state"`
-	CurrentNode *Node          `json:"current_node"`
-	Actions     []ActionOption `json:"actions"`
-	Ended       bool           `json:"ended"`
-	Ending      *Ending        `json:"ending"`
+	State       State        `json:"state"`
+	CurrentNode *Node        `json:"current_node"`
+	AuditRecord *AuditRecord `json:"audit_record,omitempty"`
+	Ended       bool         `json:"ended"`
+	Ending      *Ending      `json:"ending"`
+}
+
+type Submission struct {
+	NodeID       string   `json:"node_id"`
+	NumericValue *float64 `json:"numeric_value,omitempty"`
+	OptionID     string   `json:"option_id,omitempty"`
 }
 
 func NewEngine(nodes []Node) *Engine {
@@ -32,13 +39,12 @@ func (e *Engine) InitialResult(seed int64) Result {
 	return Result{
 		State:       state,
 		CurrentNode: node,
-		Actions:     AvailableActions(state, node),
 		Ended:       false,
 		Ending:      nil,
 	}
 }
 
-func (e *Engine) Step(state State, action Action) (Result, error) {
+func (e *Engine) StepSubmission(state State, submission Submission) (Result, error) {
 	if len(e.nodes) == 0 {
 		return Result{}, errors.New("no benchmark nodes loaded")
 	}
@@ -57,32 +63,42 @@ func (e *Engine) Step(state State, action Action) (Result, error) {
 		}
 		return Result{State: state, Ended: true, Ending: ending}, nil
 	}
-
-	unlocks := current.Unlocks
-	if branch, ok := FindBranch(current, action); ok {
-		state = ApplyEffects(state, branch.Effects)
-		if branch.ResultText != "" {
-			state.EventLog = append(state.EventLog, branch.ResultText)
-		} else {
-			state.EventLog = append(state.EventLog, fmt.Sprintf("你选择了「%s」。系统正在把该选择转换为可比较字段。", branch.Label))
-		}
-		if branch.Unlocks != nil {
-			unlocks = branch.Unlocks
-		}
-	} else {
-		state = ApplyAction(state, action)
+	if submission.NodeID != "" && submission.NodeID != current.ID {
+		return Result{}, fmt.Errorf("submission node %q does not match current node %q", submission.NodeID, current.ID)
 	}
+
+	option, submittedLabel, err := matchSubmission(*current, submission)
+	if err != nil {
+		return Result{}, err
+	}
+
+	unlocks := option.Unlocks
+	if unlocks == nil {
+		unlocks = current.Unlocks
+	}
+
+	state = ApplyEffects(state, option.Effects)
 	state = ApplyEffects(state, current.Effects)
 	state.Absurdity += current.Absurdity
 	state.Stage = current.Stage
 	state.Turn++
 	state.CompletedNodes = appendUnique(state.CompletedNodes, current.ID)
 
-	if current.TextOnPass != "" {
-		state.EventLog = append(state.EventLog, current.TextOnPass)
-	} else {
-		state.EventLog = append(state.EventLog, fmt.Sprintf("系统检测到你完成了「%s」。正在生成更精确的问题。", current.Title))
+	record := AuditRecord{
+		Turn:           state.Turn,
+		NodeID:         current.ID,
+		NodeTitle:      current.Title,
+		Stage:          current.Stage,
+		Prompt:         current.Input.Prompt,
+		SubmittedLabel: submittedLabel,
+		OptionID:       option.ID,
+		Verdict:        option.Verdict,
+		Proof:          option.Proof,
+		Effects:        option.Effects,
+		Unlocks:        append([]string(nil), unlocks...),
 	}
+	state.AuditTrail = append(state.AuditTrail, record)
+	state.EventLog = append(state.EventLog, option.Verdict)
 	state = e.spawnNewBenchmarks(state, *current, unlocks)
 	state = ClampState(state)
 
@@ -92,7 +108,7 @@ func (e *Engine) Step(state State, action Action) (Result, error) {
 		return Result{
 			State:       state,
 			CurrentNode: nil,
-			Actions:     nil,
+			AuditRecord: &record,
 			Ended:       true,
 			Ending:      ending,
 		}, nil
@@ -101,10 +117,52 @@ func (e *Engine) Step(state State, action Action) (Result, error) {
 	return Result{
 		State:       state,
 		CurrentNode: next,
-		Actions:     AvailableActions(state, next),
+		AuditRecord: &record,
 		Ended:       false,
 		Ending:      nil,
 	}, nil
+}
+
+func matchSubmission(node Node, submission Submission) (AnswerOption, string, error) {
+	if len(node.Options) == 0 {
+		return AnswerOption{}, "", fmt.Errorf("node %q has no answer options", node.ID)
+	}
+
+	switch node.Input.Type {
+	case InputTypeNumber:
+		if submission.NumericValue == nil {
+			return AnswerOption{}, "", fmt.Errorf("node %q requires numeric_value", node.ID)
+		}
+		value := *submission.NumericValue
+		for _, option := range node.Options {
+			if option.matchesNumber(value) {
+				return option, strconv.FormatFloat(value, 'f', -1, 64), nil
+			}
+		}
+		return AnswerOption{}, "", fmt.Errorf("numeric value %s did not match node %q", strconv.FormatFloat(value, 'f', -1, 64), node.ID)
+	case InputTypeSelect:
+		if submission.OptionID == "" {
+			return AnswerOption{}, "", fmt.Errorf("node %q requires option_id", node.ID)
+		}
+		for _, option := range node.Options {
+			if option.ID == submission.OptionID {
+				return option, option.Label, nil
+			}
+		}
+		return AnswerOption{}, "", fmt.Errorf("option %q did not match node %q", submission.OptionID, node.ID)
+	default:
+		return AnswerOption{}, "", fmt.Errorf("node %q has unsupported input type %q", node.ID, node.Input.Type)
+	}
+}
+
+func (option AnswerOption) matchesNumber(value float64) bool {
+	if option.Min != nil && value < *option.Min {
+		return false
+	}
+	if option.Max != nil && value > *option.Max {
+		return false
+	}
+	return true
 }
 
 func (e *Engine) NextNode(state State) *Node {
@@ -151,14 +209,20 @@ func (e *Engine) spawnNewBenchmarks(s State, node Node, unlocks []string) State 
 	return s
 }
 
-func RunSimulation(engine *Engine, seed int64, actions []Action) Result {
+func RunSimulation(engine *Engine, seed int64, submissions []Submission) Result {
 	result := engine.InitialResult(seed)
-	if len(actions) == 0 {
-		actions = defaultActions
-	}
 	for i := 0; i < 64 && !result.Ended; i++ {
-		action := actions[i%len(actions)]
-		next, err := engine.Step(result.State, action)
+		if result.CurrentNode == nil {
+			break
+		}
+		submission := defaultSubmission(*result.CurrentNode)
+		if len(submissions) > 0 {
+			submission = submissions[i%len(submissions)]
+			if submission.NodeID == "" {
+				submission.NodeID = result.CurrentNode.ID
+			}
+		}
+		next, err := engine.StepSubmission(result.State, submission)
 		if err != nil {
 			return Result{
 				State: result.State,
@@ -175,6 +239,28 @@ func RunSimulation(engine *Engine, seed int64, actions []Action) Result {
 		result = next
 	}
 	return result
+}
+
+func defaultSubmission(node Node) Submission {
+	submission := Submission{NodeID: node.ID}
+	if len(node.Options) == 0 {
+		return submission
+	}
+	first := node.Options[0]
+	if node.Input.Type == InputTypeNumber {
+		switch {
+		case first.Min != nil:
+			submission.NumericValue = first.Min
+		case first.Max != nil:
+			submission.NumericValue = first.Max
+		default:
+			value := 0.0
+			submission.NumericValue = &value
+		}
+		return submission
+	}
+	submission.OptionID = first.ID
+	return submission
 }
 
 func isImmediateEnding(id string) bool {

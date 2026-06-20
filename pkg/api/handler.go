@@ -22,8 +22,8 @@ type Handler struct {
 }
 
 type ActionRequest struct {
-	State  game.State  `json:"state"`
-	Action game.Action `json:"action"`
+	State      game.State       `json:"state"`
+	Submission *game.Submission `json:"submission"`
 }
 
 func NewHandler(nodes []game.Node, webDir string) *Handler {
@@ -75,7 +75,11 @@ func (h *Handler) handleAction(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid JSON request")
 		return
 	}
-	result, err := h.engine.Step(req.State, req.Action)
+	if req.Submission == nil {
+		writeError(w, http.StatusBadRequest, "missing submission")
+		return
+	}
+	result, err := h.engine.StepSubmission(req.State, *req.Submission)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return

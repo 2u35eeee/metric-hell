@@ -51,6 +51,29 @@ func validateNodes(nodes []game.Node) error {
 		if _, ok := seen[node.ID]; ok {
 			return fmt.Errorf("duplicate node id %q", node.ID)
 		}
+		if node.Input.Type != game.InputTypeNumber && node.Input.Type != game.InputTypeSelect {
+			return fmt.Errorf("node %s has invalid input type %q", node.ID, node.Input.Type)
+		}
+		if node.Input.Prompt == "" {
+			return fmt.Errorf("node %s has empty input prompt", node.ID)
+		}
+		if len(node.Options) == 0 {
+			return fmt.Errorf("node %s has no answer options", node.ID)
+		}
+		for j, option := range node.Options {
+			if option.ID == "" {
+				return fmt.Errorf("node %s option %d has empty id", node.ID, j)
+			}
+			if option.Label == "" {
+				return fmt.Errorf("node %s option %s has empty label", node.ID, option.ID)
+			}
+			if option.Verdict == "" {
+				return fmt.Errorf("node %s option %s has empty verdict", node.ID, option.ID)
+			}
+			if option.Proof == "" {
+				return fmt.Errorf("node %s option %s has empty proof", node.ID, option.ID)
+			}
+		}
 		seen[node.ID] = struct{}{}
 	}
 	return nil
