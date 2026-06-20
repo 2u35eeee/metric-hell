@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/fs"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,7 +18,7 @@ import (
 type Handler struct {
 	engine *game.Engine
 	nodes  []game.Node
-	webDir string
+	webFS  fs.FS
 }
 
 type ActionRequest struct {
@@ -25,10 +27,14 @@ type ActionRequest struct {
 }
 
 func NewHandler(nodes []game.Node, webDir string) *Handler {
+	return NewHandlerFS(nodes, os.DirFS(webDir))
+}
+
+func NewHandlerFS(nodes []game.Node, webFS fs.FS) *Handler {
 	return &Handler{
 		engine: game.NewEngine(nodes),
 		nodes:  nodes,
-		webDir: webDir,
+		webFS:  webFS,
 	}
 }
 
@@ -80,17 +86,31 @@ func (h *Handler) handleAction(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) serveStatic(w http.ResponseWriter, r *http.Request) {
 	path := filepath.Clean(r.URL.Path)
 	if path == "." || path == "/" {
-		path = "/index.html"
+		path = "index.html"
 	}
+	path = strings.TrimPrefix(path, "/")
 	if strings.Contains(path, "..") {
 		http.Error(w, "invalid path", http.StatusBadRequest)
 		return
 	}
-	fullPath := filepath.Join(h.webDir, strings.TrimPrefix(path, "/"))
-	if _, err := os.Stat(fullPath); errors.Is(err, os.ErrNotExist) {
-		fullPath = filepath.Join(h.webDir, "index.html")
+	if !fs.ValidPath(path) {
+		http.Error(w, "invalid path", http.StatusBadRequest)
+		return
 	}
-	http.ServeFile(w, r, fullPath)
+	data, err := fs.ReadFile(h.webFS, path)
+	if errors.Is(err, fs.ErrNotExist) {
+		path = "index.html"
+		data, err = fs.ReadFile(h.webFS, path)
+	}
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, fmt.Sprintf("read static asset: %v", err))
+		return
+	}
+	if contentType := mime.TypeByExtension(filepath.Ext(path)); contentType != "" {
+		w.Header().Set("Content-Type", contentType)
+	}
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(data)
 }
 
 func FindProjectRoot() (string, error) {

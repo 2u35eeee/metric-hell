@@ -3,6 +3,7 @@ package content
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"os"
 
 	"metric-hell/pkg/game"
@@ -13,7 +14,18 @@ func LoadNodes(path string) ([]game.Node, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read nodes: %w", err)
 	}
+	return parseNodes(data)
+}
 
+func LoadNodesFS(fsys fs.FS, path string) ([]game.Node, error) {
+	data, err := fs.ReadFile(fsys, path)
+	if err != nil {
+		return nil, fmt.Errorf("read nodes: %w", err)
+	}
+	return parseNodes(data)
+}
+
+func parseNodes(data []byte) ([]game.Node, error) {
 	var nodes []game.Node
 	if err := json.Unmarshal(data, &nodes); err != nil {
 		return nil, fmt.Errorf("parse nodes: %w", err)
