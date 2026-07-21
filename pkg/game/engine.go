@@ -104,6 +104,15 @@ func (e *Engine) StepSubmission(state State, submission Submission) (Result, err
 
 	next := e.NextNode(state)
 	ending := EvaluateEnding(state)
+	if next == nil && ending == nil {
+		ending = &Ending{
+			ID:               "benchmark_cycle",
+			Title:            "指标闭环型",
+			Type:             "系统递归过深",
+			SystemEvaluation: "系统要求你先有经验，才能获得第一段经验。流程图已首尾相接。",
+			HiddenEvaluation: "不是你没有下一步，是这套评价器把自己的门槛绕成了一个圈。",
+		}
+	}
 	if ending != nil && (next == nil || isImmediateEnding(ending.ID)) {
 		return Result{
 			State:       state,
@@ -127,6 +136,14 @@ func matchSubmission(node Node, submission Submission) (AnswerOption, string, er
 	if len(node.Options) == 0 {
 		return AnswerOption{}, "", fmt.Errorf("node %q has no answer options", node.ID)
 	}
+	if submission.OptionID != "" {
+		for _, option := range node.Options {
+			if option.ID == submission.OptionID {
+				return option, option.Label, nil
+			}
+		}
+		return AnswerOption{}, "", fmt.Errorf("option %q did not match node %q", submission.OptionID, node.ID)
+	}
 
 	switch node.Input.Type {
 	case InputTypeNumber:
@@ -141,15 +158,7 @@ func matchSubmission(node Node, submission Submission) (AnswerOption, string, er
 		}
 		return AnswerOption{}, "", fmt.Errorf("numeric value %s did not match node %q", strconv.FormatFloat(value, 'f', -1, 64), node.ID)
 	case InputTypeSelect:
-		if submission.OptionID == "" {
-			return AnswerOption{}, "", fmt.Errorf("node %q requires option_id", node.ID)
-		}
-		for _, option := range node.Options {
-			if option.ID == submission.OptionID {
-				return option, option.Label, nil
-			}
-		}
-		return AnswerOption{}, "", fmt.Errorf("option %q did not match node %q", submission.OptionID, node.ID)
+		return AnswerOption{}, "", fmt.Errorf("node %q requires option_id", node.ID)
 	default:
 		return AnswerOption{}, "", fmt.Errorf("node %q has unsupported input type %q", node.ID, node.Input.Type)
 	}

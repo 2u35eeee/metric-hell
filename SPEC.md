@@ -2,7 +2,7 @@
 
 ## 目标
 
-实现一个可上线试玩的 Go 前后端小游戏。玩家打开 URL 后，每关提交一个可比较字段，系统根据字段生成讽刺性审计判词，体验 benchmark 不断增殖的荒诞感。
+实现一个可上线试玩的 Go 前后端小游戏。玩家打开 URL 后，替一份虚构档案选择字段，系统根据选择生成讽刺性判词，体验 benchmark 不断增殖的荒诞感。
 
 ## 主题
 
@@ -29,17 +29,16 @@
 
 ## 玩法结构
 
-每个 benchmark 节点是一张要求玩家提交字段的审计表：
+每个 benchmark 节点是一张要求系统归档虚构人生片段的表：
 
 - `scenario` 描述玩家当前处在什么具体场景里。
 - `measurement` 解释该指标到底在讽刺什么、范围/口径是什么。
-- `input` 描述本关输入，`type` 为 `number` 或 `select`，并提供 `prompt` / `placeholder` / `help`。
+- `input` 描述本关字段，`type` 为 `number` 或 `select`，并提供 `prompt` / `placeholder` / `help`。
 - `options` 描述系统可匹配的分数桶或档位，每项包含 `label`、`verdict`、`proof`、`effects`、`unlocks`；数字桶可设置 `min` / `max`。
 - `questions` 是系统追问，用来制造“评价继续增殖”的荒诞感。
-- 高考节点使用数字输入和分数桶；GPA、学校层次、厂牌、岗位、风险等节点使用档位选择。
+- Web 版不会要求玩家填写真实分数。包括高考节点在内，所有题目都直接展示配置好的离散选项。
 
-前端必须先让玩家提交字段，再展示“系统判词 / 证明材料 / 指标变化 / 下一张表”。
-指标面板是辅助信息，最终结果页必须展示分析报告和路径回放。
+每轮只有一次必要操作：玩家选择后立即进入下一题，上一轮判词以简短回执保留在页面顶部。游戏中只显示三项叙事指标，完整数字和路径回放留到结果页。
 
 ## API
 
@@ -56,7 +55,7 @@
   "state": {},
   "submission": {
     "node_id": "gaokao_score",
-    "numeric_value": 701
+    "option_id": "score_700_plus"
   }
 }
 ```
@@ -69,7 +68,7 @@
   "audit_record": {
     "node_id": "gaokao_score",
     "node_title": "高考成绩 Benchmark",
-    "submitted_label": "701",
+    "submitted_label": "700+",
     "verdict": "你要是 700 以上还认识这个开发者？系统怀疑样本来源异常。",
     "proof": "系统把你标记为罕见样本，同时继续要求更多可比较字段。",
     "effects": {},

@@ -3,131 +3,127 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WorkflowBench / Metric Hell</title>
+    <meta name="description" content="一个讽刺人被无限指标化的短篇互动游戏。" />
+    <title>指标地狱 / Metric Hell</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
     <main id="home" class="screen home-screen">
-      <section class="hero">
-        <p class="eyebrow">Metric Hell Presents</p>
-        <h1>WorkflowBench</h1>
-        <p class="subtitle">一个讽刺学生评价流水线的互动 benchmark 游戏</p>
-        <div class="aliases">
-          <span>人生 CI/CD</span>
-          <span>KPI Dungeon</span>
-          <span>做题流水线模拟器</span>
-        </div>
-        <div class="statement">
-          <p>这不是升学、就业或人生建议。</p>
-          <p>你只是在不断提交字段，然后看系统如何一本正经地误读你。</p>
-          <p>如果你玩完觉得焦虑，请关闭它，然后去喝水、睡觉、散步、找朋友聊天。</p>
-        </div>
-        <button id="startBtn" class="primary-btn" type="button">开始一局</button>
+      <div class="form-ghost" aria-hidden="true">
+        <span>姓名：不重要</span><span>排名：请补充</span><span>人生：格式错误</span>
+      </div>
+
+      <header class="masthead home-masthead">
+        <span>METRIC HELL</span>
+        <span>虚构档案 / 不保存</span>
+      </header>
+
+      <section class="home-copy">
+        <p class="kicker">人生流水线模拟器</p>
+        <h1>指标地狱</h1>
+        <p class="home-lead">一个虚构学生，十九张表，和永远不够的证明材料。</p>
+        <p class="home-intro">
+          系统会从高考分数一路问到实习厂牌、大厂岗位、裁员概率和 AI 替代率。
+          你每答完一题，它就更确信人生一定能被做成下拉框。
+        </p>
+        <button id="startBtn" class="start-button" type="button">
+          <span>生成一份虚构档案</span><b aria-hidden="true">→</b>
+        </button>
+        <p id="homeError" class="error-copy" role="alert"></p>
+      </section>
+
+      <section class="plain-statement" aria-label="项目声明">
+        <strong>先说人话</strong>
+        <p>这是个讽刺游戏，不是人生测试。它不预测你，也不评价真实学校、地区、专业或职业。</p>
+        <p>不登录，不保存，不收集个人信息。所有档案都是虚构的。</p>
+        <p>玩着不舒服就关掉，去喝水、睡觉、散步，或者找朋友聊聊。游戏不值得你焦虑。</p>
       </section>
     </main>
 
-    <main id="game" class="screen dashboard hidden" aria-live="polite">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">WorkflowBench Runner</p>
-          <h2 id="studentId">虚构学生 #000</h2>
+    <main id="game" class="screen game-screen hidden" aria-live="polite">
+      <header class="masthead game-masthead">
+        <button class="wordmark" type="button" data-go-home>指标地狱</button>
+        <div class="student-line">
+          <span id="studentId">虚构学生 #000</span>
+          <span id="turnLabel">第 1 轮</span>
         </div>
-        <div class="completion">
-          <span>人生完成度</span>
-          <strong id="completionValue">0.0%</strong>
-        </div>
+        <button id="restartBtn" class="icon-button" type="button" title="重新生成档案" aria-label="重新生成档案">↻</button>
       </header>
 
-      <section class="layout">
-        <aside class="panel pipeline-panel">
-          <div class="panel-title">Workflow Pipeline</div>
-          <div id="pipeline" class="pipeline"></div>
-        </aside>
+      <nav id="stageRail" class="stage-rail" aria-label="流程阶段"></nav>
 
-        <section class="panel benchmark-panel">
-          <div id="inputPanel">
-            <div class="panel-title">Current Benchmark</div>
-            <div id="nodeStage" class="stage-pill">高中</div>
-            <h2 id="nodeTitle">高考成绩 Benchmark</h2>
-            <p id="nodeText" class="node-text"></p>
-
-            <form id="submissionForm" class="submission-form">
-              <label id="inputPrompt" for="numericInput">你的高考分数是多少？</label>
-              <input id="numericInput" class="field-input" type="number" inputmode="decimal" />
-              <select id="optionInput" class="field-input hidden"></select>
-              <p id="inputHelp" class="input-help"></p>
-              <button class="primary-btn" type="submit">提交字段给系统审判</button>
-            </form>
-
-            <ul id="questionHints" class="questions"></ul>
+      <div class="game-layout">
+        <section class="question-area">
+          <div id="receipt" class="receipt hidden" role="status">
+            <span>上一张表的回执</span>
+            <p id="receiptText"></p>
           </div>
 
-          <div id="auditPanel" class="audit-panel hidden">
-            <div class="panel-title">System Audit</div>
-            <div id="auditStage" class="stage-pill">系统</div>
-            <h2 id="auditTitle">本轮审计完成</h2>
-            <div class="submitted-field">
-              <span>你提交的字段</span>
-              <strong id="auditSubmitted"></strong>
-            </div>
-            <section class="audit-block">
-              <h3>系统判词</h3>
-              <p id="auditVerdict"></p>
-            </section>
-            <section class="audit-block muted">
-              <h3>证明材料</h3>
-              <p id="auditProof"></p>
-            </section>
-            <div id="auditEffects" class="action-meta"></div>
-            <div class="next-benchmark">
-              <span>下一张表</span>
-              <strong id="nextNodeName"></strong>
-            </div>
-            <button id="continueBtn" class="primary-btn" type="button">继续被 benchmark</button>
+          <div class="node-meta">
+            <span id="nodeStage">高中</span>
+            <span id="nodeCount">材料 01 / 19</span>
           </div>
+          <h1 id="nodeTitle">高考成绩 Benchmark</h1>
+          <p id="nodeText" class="node-text"></p>
+
+          <section class="choice-section" aria-labelledby="choicePrompt">
+            <p class="fiction-note">这不是在问你。替这份虚构档案选一项：</p>
+            <h2 id="choicePrompt"></h2>
+            <div id="choiceList" class="choice-list"></div>
+            <p id="choiceError" class="error-copy" role="alert"></p>
+          </section>
+
+          <p id="nextQuestion" class="next-question"></p>
         </section>
 
-        <aside class="panel metrics-panel">
-          <div class="panel-title">Metric Panel</div>
-          <div id="metrics" class="metrics"></div>
+        <aside class="side-readout">
+          <section>
+            <div class="section-label">系统目前看见的</div>
+            <div id="metrics" class="metrics"></div>
+          </section>
+          <section>
+            <div class="section-label">最近发生</div>
+            <div id="eventLog" class="event-log"></div>
+          </section>
+          <p class="side-note">表格只能记录它会问的东西。没被问到的，不等于不存在。</p>
         </aside>
-      </section>
-
-      <section class="panel log-panel">
-        <div class="panel-title">Event Log</div>
-        <div id="eventLog" class="event-log"></div>
-      </section>
+      </div>
     </main>
 
     <main id="result" class="screen result-screen hidden">
-      <section class="result-card">
-        <p class="eyebrow">Final Report</p>
-        <h1 id="endingTitle">分析结果</h1>
-        <p id="endingType" class="subtitle">系统分析报告</p>
-        <div class="report-block hero-report">
-          <h2>系统判定</h2>
-          <p id="finalVerdict"></p>
-        </div>
-        <div class="report-block quiet">
-          <h2>隐藏评价</h2>
-          <p id="hiddenEvaluation"></p>
-        </div>
-        <div class="report-grid">
-          <section class="report-block">
-            <h2>核心结论</h2>
-            <ul id="conclusions" class="conclusions"></ul>
-          </section>
-          <section class="report-block">
-            <h2>最终指标</h2>
-            <div id="resultMetrics" class="result-metrics"></div>
-          </section>
-        </div>
-        <section class="report-block">
-          <h2>路径回放</h2>
-          <div id="auditTrail" class="audit-trail"></div>
-        </section>
-        <button id="restartBtn" class="primary-btn" type="button">重新开始</button>
+      <header class="masthead">
+        <button class="wordmark" type="button" data-go-home>指标地狱</button>
+        <span>系统最终报告 / 仅供讽刺</span>
+      </header>
+
+      <section class="result-hero">
+        <p class="kicker">系统终于愿意停一下</p>
+        <h1 id="endingTitle">指标逃逸型</h1>
+        <div id="endingType" class="ending-stamp">人生不是 Workflow</div>
+        <p id="finalVerdict" class="final-verdict"></p>
+        <p id="hiddenEvaluation" class="hidden-evaluation"></p>
       </section>
+
+      <section class="result-layout">
+        <div>
+          <div class="section-label">系统留下的数字</div>
+          <div id="resultMetrics" class="result-metrics"></div>
+        </div>
+        <div>
+          <div class="section-label">翻译成人话</div>
+          <ul id="conclusions" class="conclusions"></ul>
+        </div>
+      </section>
+
+      <details class="trail-details">
+        <summary>看看系统一路都问了什么</summary>
+        <div id="auditTrail" class="audit-trail"></div>
+      </details>
+
+      <div class="result-actions">
+        <button id="playAgainBtn" class="start-button" type="button"><span>再生成一个人</span><b aria-hidden="true">↻</b></button>
+        <button class="text-button" type="button" data-go-home>回到开头</button>
+      </div>
     </main>
 
     <script src="/app.js"></script>

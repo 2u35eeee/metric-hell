@@ -79,6 +79,41 @@ func TestStepSubmissionBucketsGaokaoScoreAndRecordsAudit(t *testing.T) {
 	}
 }
 
+func TestStepSubmissionAcceptsOptionIDForNumericNode(t *testing.T) {
+	min := 600.0
+	max := 679.0
+	nodes := []Node{
+		{
+			ID:    InitialNodeID,
+			Title: "高考成绩 Benchmark",
+			Stage: "高中",
+			Input: InputSpec{Type: InputTypeNumber},
+			Options: []AnswerOption{
+				{
+					ID:      "score_600_679",
+					Label:   "600-679",
+					Min:     &min,
+					Max:     &max,
+					Verdict: "系统开始索要更细的排名。",
+					Proof:   "数字只是下一张表的入口。",
+				},
+			},
+		},
+	}
+	engine := NewEngine(nodes)
+
+	result, err := engine.StepSubmission(engine.InitialResult(1).State, Submission{
+		NodeID:   InitialNodeID,
+		OptionID: "score_600_679",
+	})
+	if err != nil {
+		t.Fatalf("StepSubmission returned error: %v", err)
+	}
+	if result.AuditRecord == nil || result.AuditRecord.SubmittedLabel != "600-679" {
+		t.Fatalf("audit record = %#v, want option label", result.AuditRecord)
+	}
+}
+
 func TestStepSubmissionSelectsUniversityTierVerdict(t *testing.T) {
 	nodes := []Node{
 		{
@@ -196,6 +231,34 @@ func TestBenchmarkSimulationRunCompletesWithEnding(t *testing.T) {
 
 	if result.Ending == nil {
 		t.Fatal("Ending = nil, want an ending")
+	}
+}
+
+func TestStepSubmissionEndsWhenUnlocksOnlyPointToCompletedNodes(t *testing.T) {
+	nodes := []Node{
+		{
+			ID:    InitialNodeID,
+			Title: "第一张表",
+			Stage: "高中",
+			Input: InputSpec{Type: InputTypeSelect},
+			Options: []AnswerOption{
+				{ID: "loop", Label: "回到做过的表", Verdict: "系统开始递归。", Proof: "入口要求入口经验。", Unlocks: []string{"already_done"}},
+			},
+		},
+	}
+	engine := NewEngine(nodes)
+	state := engine.InitialResult(1).State
+	state.CompletedNodes = append(state.CompletedNodes, "already_done")
+
+	result, err := engine.StepSubmission(state, Submission{NodeID: InitialNodeID, OptionID: "loop"})
+	if err != nil {
+		t.Fatalf("StepSubmission returned error: %v", err)
+	}
+	if !result.Ended || result.Ending == nil {
+		t.Fatalf("result = %#v, want explicit ending for dead-end loop", result)
+	}
+	if result.Ending.ID != "benchmark_cycle" {
+		t.Fatalf("ending ID = %q, want benchmark_cycle", result.Ending.ID)
 	}
 }
 

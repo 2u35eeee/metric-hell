@@ -55,8 +55,8 @@ func NewInitialState(seed int64) State {
 		UnlockedNodes:  []string{InitialNodeID},
 		CompletedNodes: []string{},
 		EventLog: []string{
-			fmt.Sprintf("虚构学生 #%03d 已生成。系统声明：该角色不对应任何真实个人。", suffix),
-			"WorkflowBench 已启动：请提交一个可以被排序的人生片段。",
+			fmt.Sprintf("虚构档案 #%03d 已生成。这不是任何真实的人。", suffix),
+			"系统翻开第一张表：先找一个能排序的数字。",
 		},
 		Turn:             0,
 		VirtualStudentID: fmt.Sprintf("虚构学生 #%03d", suffix),

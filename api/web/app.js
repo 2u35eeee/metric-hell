@@ -1,6 +1,7 @@
 let currentResult = null;
 let allNodes = [];
-let pendingAudit = null;
+let latestReceipt = null;
+let isSubmitting = false;
 
 const screens = {
   home: document.querySelector("#home"),
@@ -8,66 +9,92 @@ const screens = {
   result: document.querySelector("#result"),
 };
 
-const metricDefs = [
-  ["bench_score", "被排序分", "系统把你塞进榜单的顺滑程度。"],
-  ["anxiety", "焦虑负载", "为了满足下一张表而持续后台运行的压力。"],
-  ["selfhood", "自我保留量", "没有被排名、厂牌和关键词吃掉的那部分自己。"],
-  ["energy", "能量余额", "还能不能像人一样睡觉、发呆、恢复。"],
-  ["curiosity", "好奇心", "还会不会问“我想知道什么”。"],
-  ["parent_pressure", "外部催促压", "来自亲友、默认路径和稳定叙事的合力。"],
-  ["peer_comparison", "同辈比较浓度", "把别人的进度条误读成自己的判决书。"],
-  ["escape_index", "逃逸指数", "拒绝被单一字段解释的能力。"],
-  ["absurdity", "荒诞浓度", "系统越认真，事情越不像人话。"],
+const stageSteps = [
+  { label: "高中", stages: ["高中"] },
+  { label: "大学", stages: ["大学", "简历"] },
+  { label: "实习", stages: ["实习"] },
+  { label: "上班", stages: ["大厂", "大厂/AI"] },
+  { label: "系统报错", stages: ["逃逸"] },
+];
+
+const gameMetrics = [
+  ["bench_score", "系统满意度"],
+  ["anxiety", "脑内后台进程"],
+  ["selfhood", "还像自己的程度"],
+];
+
+const resultMetrics = [
+  ["bench_score", "系统满意度"],
+  ["anxiety", "焦虑负载"],
+  ["selfhood", "自我保留"],
+  ["energy", "能量余额"],
+  ["escape_index", "逃逸指数"],
+  ["absurdity", "荒诞浓度"],
 ];
 
 document.querySelector("#startBtn").addEventListener("click", startGame);
 document.querySelector("#restartBtn").addEventListener("click", startGame);
-document.querySelector("#submissionForm").addEventListener("submit", submitField);
-document.querySelector("#continueBtn").addEventListener("click", continueBenchmark);
+document.querySelector("#playAgainBtn").addEventListener("click", startGame);
+for (const button of document.querySelectorAll("[data-go-home]")) {
+  button.addEventListener("click", () => showScreen("home"));
+}
 
 async function startGame() {
-  pendingAudit = null;
-  allNodes = await fetchJSON("/api/nodes");
-  currentResult = await fetchJSON("/api/new", { method: "POST" });
-  renderGame();
-  showScreen("game");
-}
-
-async function submitField(event) {
-  event.preventDefault();
-  if (!currentResult || currentResult.ended || pendingAudit) return;
-  const node = currentResult.current_node;
-  const submission = buildSubmission(node);
-  if (!submission) return;
-
-  currentResult = await fetchJSON("/api/action", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      state: currentResult.state,
-      submission,
-    }),
-  });
-  pendingAudit = currentResult.audit_record || null;
-  if (currentResult.ended) {
-    renderResult();
-    showScreen("result");
-    return;
+  setHomeBusy(true);
+  clearErrors();
+  try {
+    [allNodes, currentResult] = await Promise.all([
+      fetchJSON("/api/nodes"),
+      fetchJSON("/api/new", { method: "POST" }),
+    ]);
+    latestReceipt = null;
+    renderGame();
+    showScreen("game");
+  } catch (error) {
+    document.querySelector("#homeError").textContent = `没启动起来：${error.message}`;
+  } finally {
+    setHomeBusy(false);
   }
-  renderGame();
 }
 
-function continueBenchmark() {
-  pendingAudit = null;
-  renderGame();
+async function chooseOption(optionID) {
+  if (!currentResult || currentResult.ended || isSubmitting) return;
+  isSubmitting = true;
+  clearErrors();
+  setChoicesBusy(optionID);
+
+  try {
+    const node = currentResult.current_node;
+    currentResult = await fetchJSON("/api/action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        state: currentResult.state,
+        submission: { node_id: node.id, option_id: optionID },
+      }),
+    });
+    latestReceipt = currentResult.audit_record || null;
+
+    if (currentResult.ended) {
+      renderResult();
+      showScreen("result");
+      return;
+    }
+
+    renderGame();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    document.querySelector("#choiceError").textContent = `系统卡住了：${error.message}`;
+    renderChoices(currentResult.current_node);
+  } finally {
+    isSubmitting = false;
+  }
 }
 
 async function fetchJSON(url, options = {}) {
   const response = await fetch(url, options);
   const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error || "请求失败");
-  }
+  if (!response.ok) throw new Error(data.error || "请求失败");
   return data;
 }
 
@@ -75,140 +102,90 @@ function showScreen(name) {
   for (const [screenName, node] of Object.entries(screens)) {
     node.classList.toggle("hidden", screenName !== name);
   }
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
 function renderGame() {
   const { state, current_node: node } = currentResult;
   document.querySelector("#studentId").textContent = state.virtual_student_id || "虚构学生";
-  document.querySelector("#completionValue").textContent = `${completionPercent(state)}%`;
-  renderMetrics("#metrics", state, { compact: true });
-  renderPipeline(state, pendingAudit ? null : node?.id);
-  renderEventLog(state);
-
-  if (pendingAudit) {
-    renderAudit(pendingAudit, node);
-    return;
-  }
-  renderInputNode(node);
-}
-
-function renderInputNode(node) {
-  showInputMode();
+  document.querySelector("#turnLabel").textContent = `第 ${state.turn + 1} 轮`;
   document.querySelector("#nodeStage").textContent = node?.stage || "系统";
-  document.querySelector("#nodeTitle").textContent = node?.title || "系统正在生成下一张表";
+  document.querySelector("#nodeCount").textContent = `材料 ${pad(state.turn + 1)} / ${allNodes.length}`;
+  document.querySelector("#nodeTitle").textContent = cleanTitle(node?.title || "系统还在想问题");
   document.querySelector("#nodeText").textContent = node?.scenario || node?.text_on_enter || "";
-  document.querySelector("#inputPrompt").textContent = node?.input?.prompt || "请提交一个可比较字段";
-  document.querySelector("#inputHelp").textContent = node?.input?.help || "";
+  document.querySelector("#choicePrompt").textContent = humanPrompt(node?.input?.prompt || "系统想把这段经历放进哪一格？");
+  document.querySelector("#nextQuestion").textContent = node?.questions?.[0]
+    ? `它已经在准备下一句：${node.questions[0]}`
+    : "";
 
-  const numberInput = document.querySelector("#numericInput");
-  const selectInput = document.querySelector("#optionInput");
-  numberInput.classList.toggle("hidden", node?.input?.type !== "number");
-  selectInput.classList.toggle("hidden", node?.input?.type !== "select");
-  numberInput.value = "";
-  numberInput.placeholder = node?.input?.placeholder || "";
-  selectInput.innerHTML = "";
-  for (const option of node?.options || []) {
-    const item = document.createElement("option");
-    item.value = option.id;
-    item.textContent = option.label;
-    selectInput.appendChild(item);
-  }
-
-  const hints = document.querySelector("#questionHints");
-  hints.innerHTML = "";
-  for (const question of (node?.questions || []).slice(0, 3)) {
-    const li = document.createElement("li");
-    li.textContent = question;
-    hints.appendChild(li);
-  }
+  renderReceipt();
+  renderChoices(node);
+  renderStageRail(node?.stage, state);
+  renderMetrics("#metrics", state, gameMetrics);
+  renderEventLog(state);
 }
 
-function renderAudit(audit, nextNode) {
-  showAuditMode();
-  document.querySelector("#auditStage").textContent = audit.stage;
-  document.querySelector("#auditTitle").textContent = audit.node_title;
-  document.querySelector("#auditSubmitted").textContent = audit.submitted_label;
-  document.querySelector("#auditVerdict").textContent = audit.verdict;
-  document.querySelector("#auditProof").textContent = audit.proof;
-  document.querySelector("#nextNodeName").textContent = nextNode?.title || "最终分析报告";
-
-  const changes = document.querySelector("#auditEffects");
-  changes.innerHTML = "";
-  for (const item of effectPills(audit.effects)) {
-    changes.appendChild(item);
+function renderChoices(node) {
+  const list = document.querySelector("#choiceList");
+  list.innerHTML = "";
+  for (const [index, option] of (node?.options || []).entries()) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "choice-button";
+    button.dataset.optionId = option.id;
+    button.innerHTML = `
+      <span class="choice-index">${String.fromCharCode(65 + index)}</span>
+      <span class="choice-label"></span>
+      <span class="choice-arrow" aria-hidden="true">→</span>
+    `;
+    button.querySelector(".choice-label").textContent = option.label;
+    button.addEventListener("click", () => chooseOption(option.id));
+    list.appendChild(button);
   }
 }
 
-function showInputMode() {
-  document.querySelector("#inputPanel").classList.remove("hidden");
-  document.querySelector("#auditPanel").classList.add("hidden");
-}
-
-function showAuditMode() {
-  document.querySelector("#inputPanel").classList.add("hidden");
-  document.querySelector("#auditPanel").classList.remove("hidden");
-}
-
-function buildSubmission(node) {
-  if (!node) return null;
-  if (node.input?.type === "number") {
-    const raw = document.querySelector("#numericInput").value.trim();
-    const value = Number(raw);
-    if (!raw || Number.isNaN(value)) {
-      document.querySelector("#inputHelp").textContent = "系统无法解析该字段，请输入一个数字。";
-      return null;
+function setChoicesBusy(selectedID) {
+  for (const button of document.querySelectorAll(".choice-button")) {
+    button.disabled = true;
+    if (button.dataset.optionId === selectedID) {
+      button.classList.add("selected");
+      button.querySelector(".choice-arrow").textContent = "…";
     }
-    return { node_id: node.id, numeric_value: value };
   }
-  return {
-    node_id: node.id,
-    option_id: document.querySelector("#optionInput").value,
-  };
 }
 
-function renderMetrics(selector, state, options = {}) {
+function renderReceipt() {
+  const box = document.querySelector("#receipt");
+  box.classList.toggle("hidden", !latestReceipt);
+  if (!latestReceipt) return;
+  document.querySelector("#receiptText").textContent = latestReceipt.verdict;
+}
+
+function renderStageRail(stage, state) {
+  const currentIndex = Math.max(0, stageSteps.findIndex((item) => item.stages.includes(stage)));
+  const rail = document.querySelector("#stageRail");
+  rail.innerHTML = "";
+  for (const [index, step] of stageSteps.entries()) {
+    const item = document.createElement("div");
+    item.className = index < currentIndex ? "done" : index === currentIndex ? "current" : "";
+    item.innerHTML = `<span>${pad(index + 1)}</span><strong>${step.label}</strong>`;
+    rail.appendChild(item);
+  }
+  rail.setAttribute("aria-label", `当前阶段：${stage}，已完成 ${state.completed_nodes?.length || 0} 个 benchmark`);
+}
+
+function renderMetrics(selector, state, definitions) {
   const container = document.querySelector(selector);
   container.innerHTML = "";
-  for (const [key, label, description] of metricDefs) {
+  for (const [key, label] of definitions) {
     const value = Number(state[key] || 0);
     const item = document.createElement("div");
-    item.className = options.compact ? "metric compact" : "metric";
-    const head = document.createElement("div");
-    head.className = "metric-head";
-    head.innerHTML = `<span>${label}</span><strong>${value}/100</strong>`;
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    const fill = document.createElement("span");
-    fill.style.width = `${value}%`;
-    bar.appendChild(fill);
-    item.append(head);
-    if (!options.compact) {
-      const copy = document.createElement("p");
-      copy.className = "metric-copy";
-      copy.textContent = description;
-      item.appendChild(copy);
-    }
-    item.appendChild(bar);
-    container.appendChild(item);
-  }
-}
-
-function renderPipeline(state, currentNodeId) {
-  const container = document.querySelector("#pipeline");
-  container.innerHTML = "";
-  for (const node of allNodes) {
-    const completed = state.completed_nodes?.includes(node.id);
-    const unlocked = state.unlocked_nodes?.includes(node.id);
-    const current = currentNodeId === node.id;
-    const item = document.createElement("div");
-    item.className = `pipeline-item ${current ? "current" : completed ? "done" : unlocked ? "open" : "locked"}`;
+    item.className = "metric";
     item.innerHTML = `
-      <span>${current ? "→" : completed ? "✓" : unlocked ? "⏳" : "🔒"}</span>
-      <div>
-        <strong>${node.stage}</strong>
-        <p>${node.title}</p>
-      </div>
+      <div class="metric-head"><span>${label}</span><strong>${value}</strong></div>
+      <div class="metric-track"><span></span></div>
     `;
+    item.querySelector(".metric-track span").style.width = `${value}%`;
     container.appendChild(item);
   }
 }
@@ -216,38 +193,34 @@ function renderPipeline(state, currentNodeId) {
 function renderEventLog(state) {
   const container = document.querySelector("#eventLog");
   container.innerHTML = "";
-  const logs = [...(state.event_log || [])].slice(-6).reverse();
+  const logs = [...(state.event_log || [])].slice(-3).reverse();
   for (const entry of logs) {
     const item = document.createElement("p");
-    item.textContent = entry;
+    item.textContent = shortenLog(entry);
     container.appendChild(item);
   }
 }
 
 function renderResult() {
-  const { state, ending, audit_record: audit } = currentResult;
-  if (audit) {
-    pendingAudit = audit;
-  }
-  document.querySelector("#endingTitle").textContent = "分析结果";
-  document.querySelector("#endingType").textContent = ending?.type || "系统分析报告";
+  const { state, ending } = currentResult;
+  document.querySelector("#endingTitle").textContent = ending?.title || "系统解释失败";
+  document.querySelector("#endingType").textContent = ending?.type || "报告未定义";
   document.querySelector("#finalVerdict").textContent = ending?.system_evaluation || "系统已经生成足够多的字段。";
   document.querySelector("#hiddenEvaluation").textContent = ending?.hidden_evaluation || "这份报告仍然解释不了完整的人。";
+  renderMetrics("#resultMetrics", state, resultMetrics);
   renderConclusions(state);
   renderAuditTrail(state.audit_trail || []);
-  renderMetrics("#resultMetrics", state);
 }
 
 function renderConclusions(state) {
   const list = document.querySelector("#conclusions");
   list.innerHTML = "";
   const pressure = topMetric(state, ["anxiety", "parent_pressure", "peer_comparison"]);
-  const escape = topMetric(state, ["selfhood", "curiosity", "escape_index"]);
-  const absurd = Number(state.absurdity || 0);
+  const alive = topMetric(state, ["selfhood", "curiosity", "escape_index"]);
   const items = [
-    `最高压力来源：${metricLabel(pressure.key)} ${pressure.value}/100。系统最擅长把这个字段解释成“还要继续”。`,
-    `最荒谬审计：荒诞浓度 ${absurd}/100。系统越认真，越像在用表格表演玄学。`,
-    `仍未被解释的部分：${metricLabel(escape.key)} ${escape.value}/100。这里残留了一点没有被字段吃掉的人。`,
+    `${metricName(pressure.key)}最高，${pressure.value}/100。系统把压力当成了继续生成表格的理由。`,
+    `荒诞浓度 ${state.absurdity}/100。问题越来越精确，答案却没有更接近一个人。`,
+    `${metricName(alive.key)}还剩 ${alive.value}/100。这部分没有被排名、厂牌和岗位名称拿走。`,
   ];
   for (const text of items) {
     const li = document.createElement("li");
@@ -263,34 +236,31 @@ function renderAuditTrail(records) {
     const item = document.createElement("article");
     item.className = "trail-item";
     item.innerHTML = `
-      <div class="trail-head">
-        <span>${record.turn}. ${record.node_title}</span>
-        <strong>${record.submitted_label}</strong>
-      </div>
-      <p></p>
-      <small></small>
+      <span class="trail-number">${pad(record.turn)}</span>
+      <div><strong></strong><p></p><small></small></div>
     `;
+    item.querySelector("strong").textContent = `${cleanTitle(record.node_title)}：${record.submitted_label}`;
     item.querySelector("p").textContent = record.verdict;
     item.querySelector("small").textContent = record.proof;
     list.appendChild(item);
   }
 }
 
-function completionPercent(state) {
-  if (!allNodes.length) return "0.0";
-  const value = Math.min((state.completed_nodes?.length || 0) / allNodes.length * 100, 99.9);
-  return value.toFixed(1);
+function humanPrompt(prompt) {
+  return prompt
+    .replace(/^你的/, "档案里的")
+    .replace(/^你/, "这个虚构学生")
+    .replace(/被系统/g, "会被系统");
 }
 
-function effectPills(effects = {}) {
-  return metricDefs.flatMap(([key, label]) => {
-    const value = Number(effects[key] || 0);
-    if (!value) return [];
-    const pill = document.createElement("span");
-    pill.className = value > 0 ? "effect-pill up" : "effect-pill down";
-    pill.textContent = `${label} ${value > 0 ? "+" : ""}${value}`;
-    return [pill];
-  });
+function cleanTitle(title) {
+  return title.replace(/\s*Benchmark$/i, "").replace(/BigFactory/g, "大厂");
+}
+
+function shortenLog(entry) {
+  return entry
+    .replace(/^系统检测到你完成了/, "做完")
+    .replace(/，已生成更细评价指标：/, "，系统又加了：");
 }
 
 function topMetric(state, keys) {
@@ -299,6 +269,29 @@ function topMetric(state, keys) {
     .sort((a, b) => b.value - a.value)[0];
 }
 
-function metricLabel(key) {
-  return metricDefs.find(([metricKey]) => metricKey === key)?.[1] || key;
+function metricName(key) {
+  const names = {
+    anxiety: "焦虑负载",
+    parent_pressure: "外部催促",
+    peer_comparison: "同辈比较",
+    selfhood: "自我保留",
+    curiosity: "好奇心",
+    escape_index: "逃逸指数",
+  };
+  return names[key] || key;
+}
+
+function setHomeBusy(busy) {
+  const button = document.querySelector("#startBtn");
+  button.disabled = busy;
+  button.querySelector("span").textContent = busy ? "正在捏造档案…" : "生成一份虚构档案";
+}
+
+function clearErrors() {
+  document.querySelector("#homeError").textContent = "";
+  document.querySelector("#choiceError").textContent = "";
+}
+
+function pad(value) {
+  return String(value).padStart(2, "0");
 }
